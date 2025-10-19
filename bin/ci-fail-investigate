@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO=${REPO:-}
+LIMIT=${LIMIT:-10}
+
+if [[ -z "${REPO}" ]]; then
+  echo "Usage: REPO=org/name $0" >&2
+  exit 1
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "gh CLI is required." >&2
+  exit 1
+fi
+
+echo "# Recent Workflow Runs (failures first)"
+gh run list --repo "${REPO}" --limit "${LIMIT}" || true
+
+echo
+echo "# Tip: Inspect logs of a run id: RUN_ID=123 gh run view $RUN_ID --repo ${REPO} --log"
+

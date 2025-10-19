@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO=${REPO:-}
+PR=${PR:-}
+
+if [[ -z "${REPO}" || -z "${PR}" ]]; then
+  echo "Usage: REPO=org/name PR=123 $0" >&2
+  exit 1
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "gh CLI is required." >&2
+  exit 1
+fi
+
+echo "# PR ${PR} Summary (${REPO})"
+gh pr view "${PR}" --repo "${REPO}" --json number,title,author,mergeable,state,additions,deletions,changedFiles,baseRefName,headRefName,labels,url || true
+echo
+echo "# Diff (first 400 lines)"
+gh pr diff "${PR}" --repo "${REPO}" | sed -n '1,400p' || true
+

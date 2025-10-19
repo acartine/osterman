@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TASK=${TASK:-feature}
+
+echo "# Implementation Workflow"
+echo "git checkout main && git pull"
+echo "# Verify builds/tests via project targets"
+echo "make build || task build || true"
+echo "make test || task test || true"
+echo
+BRANCH="feat/${TASK}"
+echo "git checkout -b ${BRANCH}"
+echo "# Implement changes..."
+echo "# Run tests/smoke tests"
+echo "make test || task test || true"
+echo "git add -A && git commit -m 'feat: ${TASK}'"
+echo "git push -u origin ${BRANCH}"
+echo "gh pr create --fill --title '${TASK}' --draft"
+echo "# Iterate until green, then mark ready"
+

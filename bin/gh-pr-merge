@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO=${REPO:-}
+PR=${PR:-}
+DRY_RUN=${DRY_RUN:-1}
+
+if [[ -z "${REPO}" || -z "${PR}" ]]; then
+  echo "Usage: REPO=org/name PR=123 [DRY_RUN=0] $0" >&2
+  exit 1
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "gh CLI is required." >&2
+  exit 1
+fi
+
+echo "# Checks"
+gh pr checks "${PR}" --repo "${REPO}" || true
+
+if [[ "${DRY_RUN}" != "0" ]]; then
+  echo "[DRY_RUN] Would squash-merge PR ${PR} in ${REPO} and delete branch." >&2
+  exit 0
+fi
+
+gh pr merge "${PR}" --repo "${REPO}" --squash --delete-branch --auto
+

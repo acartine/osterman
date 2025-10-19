@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "# Test Health Report"
+
+run_target() {
+  if command -v make >/dev/null 2>&1 && grep -qE '^test:' Makefile 2>/dev/null; then
+    echo "Running: make test"; make test; return 0
+  fi
+  if command -v task >/dev/null 2>&1 && task -l | grep -qE '^test\b'; then
+    echo "Running: task test"; task test; return 0
+  fi
+  if command -v just >/dev/null 2>&1 && just --list 2>/dev/null | grep -qE '^test\b'; then
+    echo "Running: just test"; just test; return 0
+  fi
+  return 1
+}
+
+if ! run_target; then
+  if command -v pytest >/dev/null 2>&1; then echo "Running: pytest -q"; pytest -q || true; fi
+  if command -v jest >/dev/null 2>&1; then echo "Running: jest --ci"; jest --ci || true; fi
+  if command -v go >/dev/null 2>&1; then echo "Running: go test ./..."; go test ./... || true; fi
+fi
+
+echo
+echo "# Note: parse CI logs with gh for deeper insights."
+

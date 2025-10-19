@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO=${REPO:-}
+LIMIT=${LIMIT:-40}
+
+if [[ -z "${REPO}" ]]; then
+  echo "Usage: REPO=org/name $0" >&2
+  exit 1
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "gh CLI is required." >&2
+  exit 1
+fi
+
+echo "# Possible Dependencies in ${REPO}"
+gh pr list --repo "${REPO}" --limit "${LIMIT}" --json number,title,state,headRefName,baseRefName,isDraft,mergeable,url || true
+echo
+echo "# Cross-references (best-effort)"
+gh issue list --repo "${REPO}" --state open --limit "${LIMIT}" --json number,title,url || true
+
+echo
+echo "# Hint: Use keywords like 'depends on', 'blocked by', 'fixes' in PR descriptions to improve detection."
+

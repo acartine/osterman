@@ -1,0 +1,37 @@
+# OS
+.DS_Store
+
+# Editors/IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.CLAUDE.md.swp
+
+# Claude local artifacts
+debug/
+file-history/
+ide/
+projects/
+*.lock
+plugins/
+settings.json
+history.jsonl
+shell-snapshots/
+statsig/
+todos/
+osterman/
+
+# Node/JS (if used in bin tooling)
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+.venv/
+
+# Terraform backups (if any local testing)
+.terraform/
+*.tfstate*

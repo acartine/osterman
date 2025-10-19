@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RANGE=${RANGE:-}
+LIMIT=${LIMIT:-400}
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is required." >&2
+  exit 1
+fi
+
+if [[ -n "${RANGE}" ]]; then
+  echo "# Diff stat for ${RANGE}"
+  git diff --stat "${RANGE}" || true
+  echo
+  echo "# Patch (first ${LIMIT} lines)"
+  git diff "${RANGE}" | sed -n "1,${LIMIT}p" || true
+else
+  echo "# Diff stat (working tree)"
+  git diff --stat || true
+  echo
+  echo "# Patch (first ${LIMIT} lines)"
+  git diff | sed -n "1,${LIMIT}p" || true
+fi
+

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+QUERY=${QUERY:-}
+PATTERN=${PATTERN:-}
+LIMIT=${LIMIT:-200}
+
+if ! command -v rg >/dev/null 2>&1; then
+  echo "ripgrep (rg) is required." >&2
+  exit 1
+fi
+
+if [[ -n "${QUERY}" ]]; then
+  echo "# Searching for: ${QUERY}"
+  rg -n "${QUERY}" | sed -n "1,${LIMIT}p" || true
+  exit 0
+fi
+
+if [[ -n "${PATTERN}" ]]; then
+  echo "# Files matching: ${PATTERN}"
+  rg --files "${PATTERN}" | sed -n "1,${LIMIT}p" || true
+  exit 0
+fi
+
+echo "Usage: QUERY='text' $0  OR  PATTERN='glob' $0" >&2
+exit 1
+

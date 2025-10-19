@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR=${DIR:-}
+WORKSPACE=${WORKSPACE:-}
+
+if [[ -z "${DIR}" ]]; then
+  echo "Usage: DIR=./infra [WORKSPACE=name] $0" >&2
+  exit 1
+fi
+
+cd "${DIR}"
+
+if command -v make >/dev/null 2>&1 && grep -qE 'terraform.*plan' Makefile 2>/dev/null; then
+  echo "# Using Makefile target for terraform plan"
+  make terraform/plan || true
+else
+  echo "# Running terraform plan"
+  if [[ -n "${WORKSPACE}" ]]; then
+    terraform workspace select "${WORKSPACE}" 2>/dev/null || terraform workspace new "${WORKSPACE}"
+  fi
+  terraform init -input=false -upgrade || true
+  terraform plan -no-color || true
+fi
+

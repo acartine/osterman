@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO=${REPO:-}
+LIMIT=${LIMIT:-50}
+
+if [[ -z "${REPO}" ]]; then
+  echo "Usage: REPO=org/name $0 [LIMIT]" >&2
+  exit 1
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "gh CLI is required." >&2
+  exit 1
+fi
+
+echo "# Issue Triage for ${REPO}" 
+gh issue list --repo "${REPO}" --state open --limit "${LIMIT}" --json number,title,labels,assignees,createdAt,updatedAt,comments || true
+
+if command -v jq >/dev/null 2>&1; then
+  echo
+  echo "# Suggested Priorities"
+  gh issue list --repo "${REPO}" --state open --limit "${LIMIT}" --json number,title,labels,assignees,updatedAt \
+  | jq -r '.[] | "- #\(.number) \(.title) | labels: \([.labels[].name] | join(",")) | assignees: \([.assignees[].login] | join(",")) | updated: \(.updatedAt)"' || true
+fi
+
