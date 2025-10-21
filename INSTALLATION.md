@@ -47,112 +47,78 @@ Before installing, ensure you have the following tools installed:
   terraform --version
   ```
 
-- **make** - Build automation (recommended for easy installation)
+- **make** - Build automation (for testing only)
   ```bash
   make --version
   ```
 
-## Installation Options
+## Recommended: Fork First
 
-Choose between global installation (recommended for personal use) or project-local installation (recommended for team projects).
+Before installing, we strongly recommend forking this repository to your own GitHub account. This allows you to:
 
-### Option 1: Global Installation
+- Customize the configuration for your needs
+- Version control your changes
+- Easily sync updates from upstream
+- Contribute improvements back via pull request
+- Use different branches for different configurations
 
-Install to `~/.claude` to make commands available in all projects.
+To fork:
+1. Go to the repository on GitHub
+2. Click the "Fork" button
+3. Clone your fork instead of the original repository
 
-#### Using Make (Recommended)
+## Installation
 
-```bash
-# Clone or download the repository
-git clone <repository-url> osterman
-cd osterman
+Installation is simple and identical for both user-level and project-level installations.
 
-# Run installation
-make install
-```
+### User-Level Installation
 
-This will:
-1. Backup existing `~/.claude` to `~/.claude.backup`
-2. Copy all configuration files to `~/.claude`
-3. Set executable permissions on hook scripts
-4. Display installation summary
-
-#### Manual Installation
-
-If you prefer not to use make or need more control:
+Install to `~/.claude` to make commands available in all projects:
 
 ```bash
-# Backup existing configuration
+# 1. Backup existing .claude directory (if it exists)
 if [ -d ~/.claude ]; then
-  cp -r ~/.claude ~/.claude.backup-$(date +%Y%m%d%H%M%S)
+  mv ~/.claude ~/.claude.backup-$(date +%Y%m%d%H%M%S)
 fi
 
-# Create directory
-mkdir -p ~/.claude
+# 2. Clone the repository (or your fork)
+git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
 
-# Copy configuration files
-cp -r commands ~/.claude/
-cp -r hooks ~/.claude/
-cp -r agents ~/.claude/
-cp -r skills ~/.claude/
-cp settings.json ~/.claude/
-cp CLAUDE.md ~/.claude/
-
-# Make hook scripts executable
-chmod +x ~/.claude/hooks/*.sh
-
-# Verify installation
-ls -la ~/.claude
+# 3. That's it! Verify the installation
+cd ~/.claude
+make test
 ```
 
-### Option 2: Project-Local Installation
+### Project-Level Installation
 
 Install to `.claude/` in your project directory. Use this when:
 - Working on a team project
 - Want project-specific commands
 - Need to commit configuration to version control
 
-#### Using Make (Recommended)
-
 ```bash
-# From the osterman repository
-make install-local
+# 1. Navigate to your project
+cd /path/to/your/project
+
+# 2. Backup existing .claude directory (if it exists)
+if [ -d .claude ]; then
+  mv .claude .claude.backup-$(date +%Y%m%d%H%M%S)
+fi
+
+# 3. Clone the repository (or your fork)
+git clone https://github.com/YOUR_USERNAME/osterman.git .claude
+
+# 4. Verify the installation
+cd .claude
+make test
 ```
 
-This will:
-1. Create `.claude/` directory in current project
-2. Copy all configuration files
-3. Create `settings.local.json` (automatically loaded by Claude Code)
-4. Set executable permissions on hooks
-
-#### Manual Installation
-
-```bash
-# Create .claude directory
-mkdir -p .claude
-
-# Copy configuration files
-cp -r commands .claude/
-cp -r hooks .claude/
-cp -r agents .claude/
-cp -r skills .claude/
-
-# Copy settings.json as settings.local.json for project-local config
-cp settings.json .claude/settings.local.json
-
-# Make hook scripts executable
-chmod +x .claude/hooks/*.sh
-
-# Add to .gitignore if desired (optional)
-echo ".claude/telemetry.log" >> .gitignore
-```
-
-### Option 3: Hybrid Approach
+### Hybrid Approach
 
 You can combine both approaches:
 
 1. Install globally for base configuration
-2. Override specific settings in project `.claude/settings.local.json`
+2. Install project-locally to override specific settings
 3. Add project-specific commands in `.claude/commands/`
 
 Claude Code will merge global and local configurations, with local taking precedence.
@@ -228,12 +194,41 @@ tail -f ~/.claude/telemetry.log
 # 2025-10-21T14:30:45Z | Bash | Run test suite | exit=0
 ```
 
-## Configuration
+## Customization
+
+Since the configuration is now a git repository, you can customize it like any other codebase.
+
+### Making Changes
+
+```bash
+# Navigate to your .claude directory
+cd ~/.claude  # or cd /path/to/project/.claude
+
+# Create a branch for your changes (optional but recommended)
+git checkout -b my-customizations
+
+# Edit files as needed
+vim settings.json
+vim commands/my-command.md
+
+# Commit your changes
+git add .
+git commit -m "Add custom settings and commands"
+
+# Push to your fork
+git push origin my-customizations
+```
 
 ### Customizing Settings
 
-Edit `~/.claude/settings.json` or `.claude/settings.local.json`:
+Edit `settings.json` directly:
 
+```bash
+cd ~/.claude
+vim settings.json  # or use your preferred editor
+```
+
+Example customizations:
 ```json
 {
   "hooks": {
@@ -252,11 +247,11 @@ Edit `~/.claude/settings.json` or `.claude/settings.local.json`:
 
 ### Adding Custom Commands
 
-Create new command files in `~/.claude/commands/`:
+Create new command files:
 
 ```bash
-# Create new command
-cat > ~/.claude/commands/my-command.md <<'EOF'
+cd ~/.claude/commands
+cat > my-command.md <<'EOF'
 ---
 description: My custom command
 model: claude-sonnet-4-5-20250929
@@ -266,116 +261,155 @@ model: claude-sonnet-4-5-20250929
 
 Instructions for Claude...
 EOF
+
+# Commit the new command
+git add my-command.md
+git commit -m "Add my-command"
 ```
 
-### Disabling Hooks
+### Using Branches for Different Configurations
 
-To temporarily disable a hook, edit `settings.json`:
+You can use git branches to maintain different configurations:
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [],  // Disable pre-hooks
-    "PostToolUse": []  // Disable post-hooks
-  }
-}
+```bash
+cd ~/.claude
+
+# Create a branch for work projects
+git checkout -b work-config
+# Edit settings, add work-specific commands
+git commit -am "Work configuration"
+
+# Create a branch for personal projects
+git checkout -b personal-config
+# Edit settings, add personal commands
+git commit -am "Personal configuration"
+
+# Switch between configurations
+git checkout work-config    # Use work settings
+git checkout personal-config # Use personal settings
 ```
 
 ## Updating
 
-### Update Global Installation
+Updating is simple with git pull.
+
+### Basic Update
 
 ```bash
-# Pull latest changes
-cd osterman
+# Navigate to your .claude directory
+cd ~/.claude  # or cd /path/to/project/.claude
+
+# Pull latest changes from upstream
 git pull
-
-# Reinstall (backs up existing config)
-make install
-
-# Or manually copy specific files
-cp commands/*.md ~/.claude/commands/
-cp hooks/*.sh ~/.claude/hooks/
-chmod +x ~/.claude/hooks/*.sh
 ```
 
-### Update Project-Local Installation
+### Update with Customizations
+
+If you've made local customizations:
 
 ```bash
-# Pull latest changes
-cd osterman
+cd ~/.claude
+
+# Stash your local changes
+git stash
+
+# Pull latest updates
 git pull
 
-# Reinstall to project
-make install-local
+# Re-apply your changes
+git stash pop
 
-# Or manually update
-cp commands/*.md .claude/commands/
-cp hooks/*.sh .claude/hooks/
-chmod +x .claude/hooks/*.sh
+# If there are conflicts, resolve them manually
+# Then commit the merged result
+git add .
+git commit -m "Merge updates with local customizations"
 ```
 
-### Selective Updates
-
-Update only specific components:
+### Sync with Upstream (if using a fork)
 
 ```bash
-# Update only commands
-cp commands/*.md ~/.claude/commands/
+cd ~/.claude
 
-# Update only hooks
-cp hooks/*.sh ~/.claude/hooks/
-chmod +x ~/.claude/hooks/*.sh
+# Add upstream remote (only needed once)
+git remote add upstream https://github.com/ORIGINAL_OWNER/osterman.git
 
-# Update only settings
-cp settings.json ~/.claude/settings.json
+# Fetch upstream changes
+git fetch upstream
+
+# Merge upstream changes into your fork
+git merge upstream/main
+
+# Push to your fork
+git push origin main
+```
+
+### Using Different Versions
+
+You can check out specific versions or branches:
+
+```bash
+cd ~/.claude
+
+# Check out a specific version tag
+git checkout v1.0.0
+
+# Check out a specific branch
+git checkout experimental-features
+
+# Return to main branch
+git checkout main
 ```
 
 ## Uninstallation
 
-### Remove Global Installation
+Uninstallation is straightforward since the configuration is just a directory.
 
-Using make:
-
-```bash
-make uninstall
-```
-
-This will:
-1. Prompt for confirmation
-2. Remove `~/.claude` directory
-3. Offer to restore backup from `~/.claude.backup`
-
-Manual removal:
+### Remove Installation
 
 ```bash
-# Remove configuration
+# Remove global installation
 rm -rf ~/.claude
 
-# Optionally restore backup
+# OR remove project-local installation
+rm -rf /path/to/project/.claude
+```
+
+### Restore from Backup
+
+If you created a backup during installation:
+
+```bash
+# List available backups
+ls -la ~ | grep claude.backup
+
+# Restore a backup
+mv ~/.claude.backup-20251021143045 ~/.claude
+
+# Or restore the most recent backup
 mv ~/.claude.backup ~/.claude
 ```
 
-### Remove Project-Local Installation
+### Selective Removal
+
+Remove only telemetry logs:
 
 ```bash
-# Remove .claude directory
-rm -rf .claude
-```
-
-### Clean Telemetry Logs
-
-```bash
-# Remove telemetry log
 rm ~/.claude/telemetry.log
-
-# Or clear while keeping file
-> ~/.claude/telemetry.log
 ```
 
 ## Troubleshooting
 
-### Installation Fails
+### Installation Issues
+
+**Git clone fails:**
+```bash
+# Ensure you have git installed
+git --version
+
+# Verify the repository URL is correct
+# If using a fork, replace with your username
+git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
+```
 
 **jq not found:**
 ```bash
@@ -386,32 +420,50 @@ sudo apt-get install jq  # Linux
 
 **Permission denied on hooks:**
 ```bash
-# Make scripts executable
+# Hook scripts should be executable by default
+# If not, make them executable:
 chmod +x ~/.claude/hooks/*.sh
 ```
 
 **Validation fails:**
 ```bash
-# Check what failed
+# Navigate to .claude directory
+cd ~/.claude
+
+# Run tests
 make test
 
 # Fix common issues:
 # - Invalid JSON: validate with `jq empty settings.json`
-# - Missing files: ensure all directories copied
-# - Hook permissions: run chmod +x
+# - Hook permissions: run chmod +x ~/.claude/hooks/*.sh
 ```
 
-### Commands Not Working
+### Update Issues
 
-**Command not recognized:**
-1. Check command exists: `ls ~/.claude/commands/`
-2. Verify frontmatter: `head -n 5 ~/.claude/commands/test-health.md`
-3. Check Claude Code version: `claude --version`
+**Merge conflicts:**
+```bash
+# When conflicts occur during git pull
+cd ~/.claude
 
-**Hooks not triggering:**
-1. Verify hooks in settings.json
-2. Check hook script is executable: `ls -la ~/.claude/hooks/`
-3. Test hook directly: `~/.claude/hooks/pre_safety_check.sh "test"`
+# View conflicted files
+git status
+
+# Resolve conflicts manually, then:
+git add .
+git commit -m "Resolve merge conflicts"
+```
+
+**Lost customizations:**
+```bash
+# Recover from git reflog
+cd ~/.claude
+git reflog
+git checkout HEAD@{1}  # or appropriate commit
+
+# Or restore from stash
+git stash list
+git stash apply stash@{0}
+```
 
 ### Need Help?
 

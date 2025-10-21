@@ -45,20 +45,20 @@ Two executable hooks that enforce guardrails:
 ### Installation
 
 ```bash
-# Clone or download this repository
-cd osterman
+# Step 1: Fork the repository on GitHub (recommended)
+# Go to https://github.com/ORIGINAL_OWNER/osterman and click "Fork"
 
-# Install globally to ~/.claude (recommended)
-make install
+# Step 2: Install globally to ~/.claude
+mv ~/.claude ~/.claude.backup  # backup existing config if it exists
+git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
 
 # OR install to project .claude directory
-make install-local
-```
+cd /path/to/your/project
+mv .claude .claude.backup  # backup existing config if it exists
+git clone https://github.com/YOUR_USERNAME/osterman.git .claude
 
-### Validation
-
-```bash
-# Verify installation
+# Step 3: Verify installation
+cd ~/.claude  # or cd /path/to/project/.claude
 make test
 ```
 
@@ -73,6 +73,16 @@ claude /pe plan DIR=./infra WORKSPACE=staging
 
 # Create a PR from current branch
 claude /swe impl TASK="add-feature" SPEC="Add user authentication"
+```
+
+### Updating
+
+```bash
+# Navigate to your .claude directory
+cd ~/.claude  # or cd /path/to/project/.claude
+
+# Pull latest changes
+git pull
 ```
 
 ## Command Reference

@@ -4,6 +4,37 @@ Solutions to common issues with the Osterman Claude Configuration.
 
 ## Common Issues
 
+### Installation Issues
+
+**Symptom:** Git clone fails or installation doesn't complete
+
+**Solutions:**
+
+1. **Verify git is installed:**
+   ```bash
+   git --version
+   ```
+
+2. **Check repository URL:**
+   ```bash
+   # Make sure you're using the correct URL
+   # If forked, use your username
+   git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
+   ```
+
+3. **Check directory doesn't already exist:**
+   ```bash
+   # If .claude already exists, back it up first
+   mv ~/.claude ~/.claude.backup-$(date +%Y%m%d%H%M%S)
+   git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
+   ```
+
+4. **Verify installation:**
+   ```bash
+   ls -la ~/.claude/
+   # Should see: commands/, hooks/, agents/, skills/, settings.json, etc.
+   ```
+
 ### Commands Not Recognized
 
 **Symptom:** Claude responds with "Unknown slash command" or doesn't recognize `/command-name`
@@ -452,19 +483,65 @@ tail -n 5 ~/.claude/telemetry.log 2>/dev/null || echo "No telemetry log found"
 
 ### Reset to Defaults
 
-If all else fails, reinstall:
+If all else fails, reinstall from scratch:
 
 ```bash
-# Backup current config
-cp -r ~/.claude ~/.claude.backup-$(date +%Y%m%d%H%M%S)
+# Remove current installation
+rm -rf ~/.claude
 
-# Reinstall
-cd osterman
-make install
+# Reinstall fresh
+git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
 
 # Verify
+cd ~/.claude
 make test
 ```
+
+### Update Issues
+
+**Symptom:** Git pull fails or creates conflicts
+
+**Solutions:**
+
+1. **View current status:**
+   ```bash
+   cd ~/.claude
+   git status
+   ```
+
+2. **Stash local changes before pulling:**
+   ```bash
+   git stash
+   git pull
+   git stash pop
+   ```
+
+3. **Resolve merge conflicts:**
+   ```bash
+   # View conflicted files
+   git status
+
+   # Edit files to resolve conflicts
+   # Then add and commit
+   git add .
+   git commit -m "Resolve merge conflicts"
+   ```
+
+4. **Force update (discards local changes):**
+   ```bash
+   cd ~/.claude
+   git fetch origin
+   git reset --hard origin/main
+   # WARNING: This will discard all local changes
+   ```
+
+5. **Sync fork with upstream:**
+   ```bash
+   cd ~/.claude
+   git remote add upstream https://github.com/ORIGINAL_OWNER/osterman.git
+   git fetch upstream
+   git merge upstream/main
+   ```
 
 ## Prevention Tips
 
@@ -502,15 +579,15 @@ make test && git commit -m "Update Claude config"
 ### Stay Updated
 
 ```bash
+# Navigate to your .claude directory
+cd ~/.claude
+
 # Pull updates regularly
-cd osterman
 git pull
 
-# Review changes before updating
-git diff HEAD@{1} HEAD
-
-# Update installation
-make install
+# Review changes after updating
+git log -5 --oneline
+git diff HEAD~1 HEAD
 ```
 
 ---
