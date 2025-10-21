@@ -21,6 +21,10 @@ shell-snapshots/
 statsig/
 todos/
 osterman/
+.claude/
+telemetry.jsonl
+*.backup
+*.backup-*
 
 # Node/JS (if used in bin tooling)
 node_modules/
