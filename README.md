@@ -6,6 +6,9 @@ Production-ready Claude Code configuration for autonomous software development w
 
 The `osterman` .claude configuration provides specialized slash commands, safety hooks, and autonomous agent workflows for professional software development. It implements a secure, efficient approach to infrastructure management, code implementation, PR review, and debugging using Claude Code CLI.
 
+## Why is it called `osterman`?
+Before he was Dr. Manhattan, he was Jon Osterman.  We hope someday to be Dr. Manhattan.
+
 ## Features
 
 ### Slash Commands
