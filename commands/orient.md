@@ -16,12 +16,14 @@ Analyze pull requests and/or issues to provide clear context, review changes, id
 User provided: $ARGUMENTS
 
 Expected format:
+- No arguments - Auto-detect from: PR for current branch, status markdown files, or issue from branch name
 - `PR=<num>` - Pull request number to analyze
 - `ISSUE=<num>` - Issue number to analyze
 - `REPO=<org/name>` - Repository (optional, auto-detects from git remote)
 - Can specify PR, ISSUE, or both together
 
 Examples:
+- (no args) - Auto-detect from branch/status files
 - `PR=123` - Analyze PR #123 in current repo
 - `ISSUE=456` - Analyze issue #456 in current repo
 - `PR=123 ISSUE=456` - Analyze both PR and related issue
@@ -37,7 +39,52 @@ Examples:
 - Parse org/repo from URL
 - Validate repo exists with: `gh repo view <org/repo>`
 
-### 2. Fetch PR Context (if PR specified)
+### 2. Auto-detect PR/Issue from Branch (if not specified)
+If neither PR nor ISSUE is provided, attempt to detect from current branch:
+
+**For PR detection:**
+```bash
+# Get current branch name
+BRANCH=$(git branch --show-current)
+
+# Try to find PR for this branch
+gh pr list --repo <org/repo> --head "$BRANCH" --json number --jq '.[0].number'
+```
+
+**For Issue detection from branch name:**
+Parse branch name for common patterns:
+- `fix-123` or `fix/123` → Issue #123
+- `issue-456` or `issue/456` → Issue #456
+- `feature/789-description` → Issue #789
+- Extract number after common prefixes: `fix-`, `issue-`, `feature-`, `bug-`
+
+**For status markdown file detection:**
+Check for status/progress tracking markdown files that are new or changed:
+```bash
+# Find .md files changed from main or new on branch
+git diff --name-only main...HEAD | grep '\.md$'
+git ls-files --others --exclude-standard | grep '\.md$'
+```
+
+Analyze each markdown file to determine if it's a status document:
+- Look for headers like: "Status", "Progress", "Updates", "Notes"
+- Look for PR/issue references: `#123`, `PR #456`, `issue #789`
+- Look for status indicators: "TODO", "In Progress", "Done", "Blocked"
+- Look for dates/timestamps suggesting tracking over time
+- Common filenames: `STATUS.md`, `PROGRESS.md`, `UPDATES.md`, `NOTES.md`
+
+If status file found with PR/issue references:
+- Extract all PR/issue numbers mentioned
+- Suggest: "Found status file <filename> referencing PR #<num> and issue #<num>"
+- Ask: "Would you like to orient on these?"
+
+**Detection logic (in order):**
+1. Try to find open PR for current branch
+2. If no PR found, look for status markdown files with PR/issue references
+3. If no status files, try to parse issue number from branch name
+4. If all fail, report: "No PR or issue detected. Please specify PR=<num> or ISSUE=<num>"
+
+### 3. Fetch PR Context (if PR specified)
 Use gh commands to gather:
 - `gh pr view <num> --repo <org/repo>` - Get PR overview
 - `gh pr diff <num> --repo <org/repo>` - Get code changes
@@ -50,7 +97,7 @@ Analyze:
 - **Status**: Draft/Open/Merged, CI results, reviews
 - **Blockers**: Failed checks, unresolved comments, merge conflicts
 
-### 3. Fetch Issue Context (if ISSUE specified)
+### 4. Fetch Issue Context (if ISSUE specified)
 Use gh commands to gather:
 - `gh issue view <num> --repo <org/repo>` - Get issue details
 - `gh issue view <num> --repo <org/repo> --comments` - Get discussion
@@ -61,7 +108,7 @@ Analyze:
 - **Status**: Open/Closed, assignee, labels
 - **Related Work**: Linked PRs or issues mentioned
 
-### 4. Code Change Analysis
+### 5. Code Change Analysis
 If PR provided:
 - Review diff to understand scope of changes
 - Identify modified components/modules
@@ -71,7 +118,7 @@ If PR provided:
   - Locate test files for changed code
 - Assess change complexity (Low/Medium/High)
 
-### 5. Dependency and Blocker Identification
+### 6. Dependency and Blocker Identification
 Check for:
 - **CI/CD Status**: Are checks passing? What failed?
 - **Review Status**: Approved? Changes requested? Pending?
@@ -84,7 +131,7 @@ Use gh to inspect:
 gh pr view <num> --json statusCheckRollup,reviewDecision,mergeable
 ```
 
-### 6. Next Steps Recommendation
+### 7. Next Steps Recommendation
 Provide clear, actionable next steps based on analysis:
 
 **For PRs:**
@@ -105,7 +152,7 @@ Provide clear, actionable next steps based on analysis:
 - Identify if PR fully addresses issue
 - Suggest additional work needed
 
-### 7. Orientation Summary
+### 8. Orientation Summary
 Produce a clear summary with:
 
 ```markdown
@@ -171,12 +218,18 @@ Produce a clear summary with:
 
 ## Examples
 
-**Orient on a PR:**
+**Auto-detect from current branch:**
+```
+/orient
+```
+Automatically finds PR for current branch, checks for status markdown files with PR/issue references, or parses issue number from branch name.
+
+**Orient on a specific PR:**
 ```
 /orient PR=123
 ```
 
-**Orient on an issue:**
+**Orient on a specific issue:**
 ```
 /orient ISSUE=456
 ```
@@ -193,6 +246,16 @@ Produce a clear summary with:
 
 **Common scenarios:**
 ```
+# On feature branch - auto-detect the PR
+/orient
+
+# On branch "fix-123" - will find PR or analyze issue #123
+/orient
+
+# Working on branch with STATUS.md tracking PR #42 and issue #38
+/orient
+# Will find and suggest those references
+
 # Just joined a team, understand ongoing work
 /orient PR=42
 
