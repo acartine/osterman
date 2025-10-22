@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre_safety_check.sh"
+            "command": "~/.claude/hooks/pre_safety_check.sh"
           }
         ]
       }
@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_telemetry.sh",
+            "command": "~/.claude/hooks/post_telemetry.sh",
             "timeout": 5000
           }
         ]

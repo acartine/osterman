@@ -108,10 +108,34 @@ fi
 # 3. Clone the repository (or your fork)
 git clone https://github.com/YOUR_USERNAME/osterman.git .claude
 
-# 4. Verify the installation
+# 4. Update hook paths in settings.json
+# By default, hooks point to ~/.claude/hooks/ (user-level)
+# For project-level hooks, update .claude/settings.json:
 cd .claude
+sed -i.bak 's|~/.claude/hooks/|"$CLAUDE_PROJECT_DIR"/.claude/hooks/|g' settings.json
+
+# 5. Verify the installation
 make test
 ```
+
+**Important Note about Hooks:**
+
+By default, `settings.json` references hooks at `~/.claude/hooks/` (user-level). This is intentional to allow:
+- Sharing hooks across all projects
+- Centralized hook management
+- Avoiding hook duplication
+
+For project-level installations, you have two options:
+
+**Option A: Use User-Level Hooks (Recommended)**
+- Keep the default `~/.claude/hooks/` paths in settings.json
+- Install hooks once at user-level: `~/.claude/hooks/`
+- All projects use the same hooks
+
+**Option B: Use Project-Level Hooks**
+- Update settings.json to use `$CLAUDE_PROJECT_DIR` instead of `~`
+- Copy hooks to project: `cp ~/.claude/hooks/*.sh .claude/hooks/`
+- Each project has its own hooks (useful for custom project rules)
 
 ### Hybrid Approach
 
