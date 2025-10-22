@@ -15,7 +15,7 @@ ide/
 projects/
 *.lock
 plugins/
-settings.json
+settings.local.json
 history.jsonl
 shell-snapshots/
 statsig/

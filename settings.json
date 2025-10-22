@@ -1,0 +1,96 @@
+{
+  "comment": "Settings for Iteration 4 - With safety hook and telemetry",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "comment": "Block dangerous infrastructure operations",
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre_safety_check.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "comment": "Log all tool usage for audit and analysis",
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_telemetry.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  },
+
+  "env": {
+    "CLAUDE_TELEMETRY": "1"
+  },
+
+  "permissions": {
+    "allow": [
+      "Bash(awk:*)",
+      "Bash(aws:*)",
+      "Bash(az:*)",
+      "Bash(cat:*)",
+      "Bash(cd:*)",
+      "Bash(chmod:*)",
+      "Bash(cwd:*)",
+      "Bash(curl:*)",
+      "Bash(cut:*)",
+      "Bash(date:*)",
+      "Bash(docker:*)",
+      "Bash(echo:*)",
+      "Bash(find:*)",
+      "Bash(for:*)",
+      "Bash(gh:*)",
+      "Bash(git:*)",
+      "Bash(go:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(make:*)",
+      "Bash(mkdir:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(nslookup:*)",
+      "Bash(openssl:*)",
+      "Bash(poetry:*)",
+      "Bash(ps:*)",
+      "Bash(psql:*)",
+      "Bash(pwd:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pytest:*)",
+      "Bash(rg:*)",
+      "Bash(sed:*)",
+      "Bash(sleep:*)",
+      "Bash(tail:*)",
+      "Bash(task:*)",
+      "Bash(terraform:*)",
+      "Bash(test:*)",
+      "Bash(timeout:*)",
+      "Bash(tsc:*)",
+      "Bash(unzip:*)",
+      "Bash(wc:*)",
+      "Bash(wget:*)",
+      "Bash(which:*)",
+      "Bash(yarn:*)",
+      "Bash(zip:*)",
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "ask": [
+      "Write",
+      "Edit"
+    ]
+  }
+}
