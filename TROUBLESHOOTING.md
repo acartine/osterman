@@ -175,11 +175,11 @@ Solutions to common issues with the Osterman Claude Configuration.
    ```
 
 2. **Verify model IDs are correct:**
-   - Sonnet 4.5: `claude-sonnet-4-5-20250929`
+   - Sonnet 4.5: `sonnet`
    - Haiku 4.5: `claude-haiku-4-5-20251001`
 
 3. **Update outdated model IDs:**
-   If you see older model IDs (claude-3-5-sonnet-20241022, etc.), update them:
+   If you see older model IDs (claude-3-5-sonnet-20241022, claude-sonnet-4-5-20250929, etc.), update them to use short aliases like `sonnet` or `haiku`:
    ```bash
    # Edit each command file
    vim ~/.claude/commands/test-health.md

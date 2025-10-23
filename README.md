@@ -201,7 +201,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 
 ### Models Used
 
-- **Sonnet 4.5**: `claude-sonnet-4-5-20250929` (default for most commands)
+- **Sonnet 4.5**: `sonnet` (default for most commands)
 - **Haiku 4.5**: `claude-haiku-4-5-20251001` (for lightweight operations)
 
 Commands specify their model in frontmatter; defaults to Sonnet if not specified.
@@ -215,7 +215,7 @@ Create a new `.md` file in `commands/`:
 ```markdown
 ---
 description: Brief description of what this command does
-model: claude-sonnet-4-5-20250929
+model: sonnet
 allowed-tools: Bash(make:*), Read, Grep
 ---
 

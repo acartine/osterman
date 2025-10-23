@@ -2,7 +2,7 @@
 description: Team Lead agent for PR review, issue triage, and merge decisions
 argument-hint: review|triage|merge [REPO=<org/name>] [PR=<num>]
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Grep, Glob
-model: claude-sonnet-4-5-20250929
+model: sonnet
 ---
 
 # Team Lead Agent

@@ -153,7 +153,7 @@ But:
 description: Run Terraform plan-only and summarize risks
 argument-hint: [DIR] [WORKSPACE]
 allowed-tools: Bash(terraform:*), Bash(make:*)
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 You are the Production Engineering (pe) agent.
@@ -380,7 +380,7 @@ osterman/                            # Template root (copy to ~/.claude)
 description: Run Terraform plan-only analysis with risk summary
 argument-hint: DIR=<path> [WORKSPACE=<name>]
 allowed-tools: Bash(terraform:*), Bash(make:*), Bash(cd:*), Read, Grep
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 # Production Engineering: Terraform Plan Analysis
@@ -670,7 +670,7 @@ Agents are mostly correct but need clarification that skills/hooks are reference
 ---
 name: pe
 description: Production Engineering hybrid agent for cloud/infra/devops tasks with safe autonomy for plan-only/analysis and confirm-first for high-risk operations.
-model: claude-3-5-sonnet-20241022
+model: sonnet
 autonomy: true
 ---
 
@@ -738,7 +738,7 @@ Each command is a Markdown file with optional YAML frontmatter:
 description: Brief description shown in /help
 argument-hint: [arg1] [arg2]
 allowed-tools: Bash(git:*), Read, Write
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 Command prompt goes here.

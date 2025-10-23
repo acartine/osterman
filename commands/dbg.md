@@ -2,7 +2,7 @@
 description: Code Debugger agent for troubleshooting runtime errors and unexpected behavior
 argument-hint: <problem-description>
 allowed-tools: Bash(grep:*), Bash(tail:*), Bash(head:*), Bash(cat:*), Bash(make:*), Bash(npm:*), Read, Grep, Glob
-model: claude-sonnet-4-5-20250929
+model: sonnet
 ---
 
 # Code Debugger Agent

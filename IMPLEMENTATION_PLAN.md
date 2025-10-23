@@ -199,7 +199,7 @@ cat > commands/pe-plan.md << 'EOF'
 description: Run Terraform plan-only analysis with risk summary
 argument-hint: DIR=<path> [WORKSPACE=<name>]
 allowed-tools: Bash(terraform:*), Bash(make:*), Bash(cd:*), Read, Grep, Glob
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 # Production Engineering: Terraform Plan Analysis
@@ -265,7 +265,7 @@ cat > commands/tl-review.md << 'EOF'
 description: Review pull request with structured feedback
 argument-hint: REPO=<org/name> PR=<number>
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Grep
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 # Team Lead: Pull Request Review
@@ -1354,7 +1354,7 @@ cat > commands/pe-apply.md << 'EOF'
 description: Terraform apply with confirm-first approval workflow
 argument-hint: DIR=<path> [WORKSPACE=<name>]
 allowed-tools: Bash(terraform:*), Bash(make:*), Read, AskUserQuestion
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 # Production Engineering: Terraform Apply (Confirm-First)
@@ -2269,7 +2269,7 @@ Slash commands are markdown files with YAML frontmatter that define:
 description: Brief description for /help
 argument-hint: Usage hint shown to user
 allowed-tools: Tool1, Tool2, Tool3
-model: claude-3-5-sonnet-20241022  # Optional
+model: sonnet  # Optional
 ---
 
 # Command Title

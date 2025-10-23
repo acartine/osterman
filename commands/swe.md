@@ -2,7 +2,7 @@
 description: Software Engineering agent for feature implementation with specs
 argument-hint: impl TASK="<description>" [SPEC=<url-or-notes>]
 allowed-tools: Bash(git:*), Bash(make:*), Bash(npm:*), Bash(pytest:*), Read, Grep, Glob, Write, Edit
-model: claude-3-5-sonnet-20241022
+model: sonnet
 ---
 
 # Software Engineering Implementation Agent

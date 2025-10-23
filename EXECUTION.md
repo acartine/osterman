@@ -336,7 +336,7 @@ hooks/*.sh (Safety & telemetry)
 
 ### Models Used
 
-- **Sonnet 4.5:** `claude-sonnet-4-5-20250929` (default for complex operations)
+- **Sonnet 4.5:** `sonnet` (default for complex operations)
 - **Haiku 4.5:** `claude-haiku-4-5-20251001` (for lightweight operations)
 
 Commands specify model in frontmatter; defaults to Sonnet if unspecified.
