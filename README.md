@@ -13,12 +13,13 @@ Before he was Dr. Manhattan, he was Jon Osterman.  We hope someday to be Dr. Man
 
 ### Slash Commands
 
-Six specialized commands for common development workflows:
+Seven specialized commands for common development workflows:
 
 - **`/test-health`** - Generate test health reports with flaky and slow test analysis
 - **`/pe`** - Production Engineering workflows with safety guardrails for infrastructure changes
 - **`/tl`** - Team Lead workflows for PR review, issue triage, and merge management
-- **`/swe`** - Software Engineering implementation with branch workflow and DRAFT PRs
+- **`/swe`** - Software Engineering implementation with branch workflow and DRAFT PRs (Sonnet-powered)
+- **`/jswe`** - Junior Software Engineering for simple tasks (Haiku-powered, faster and cheaper)
 - **`/dbg`** - Code debugging with scoped analysis and fix proposals
 - **`/arch`** - Architecture planning and integration design
 
@@ -74,8 +75,11 @@ claude /test-health
 # Production Engineering terraform plan
 claude /pe plan DIR=./infra WORKSPACE=staging
 
-# Create a PR from current branch
+# Implement a complex feature (uses Sonnet)
 claude /swe impl TASK="add-feature" SPEC="Add user authentication"
+
+# Quick bug fix (uses Haiku - faster and cheaper)
+claude /jswe impl TASK="fix-null-check" SPEC="Add null check in getUserById"
 ```
 
 ### Updating
@@ -97,7 +101,8 @@ git pull
 | `/pe apply` | Apply terraform changes (requires approval) | `/pe apply DIR=./infra WORKSPACE=staging` |
 | `/tl review` | Review and merge pull requests | `/tl review REPO=org/repo PR=123` |
 | `/tl triage` | Triage issues and map dependencies | `/tl triage REPO=org/repo` |
-| `/swe impl` | Implement feature with branch workflow | `/swe impl TASK="feature-x" SPEC="description"` |
+| `/swe impl` | Implement complex features (Sonnet) | `/swe impl TASK="feature-x" SPEC="description"` |
+| `/jswe impl` | Implement simple tasks (Haiku - faster/cheaper) | `/jswe impl TASK="fix-bug" SPEC="add null check"` |
 | `/dbg` | Debug issues with scoped analysis | `/dbg "500 error on login endpoint"` |
 | `/arch plan` | Create architecture integration plan | `/arch plan FEATURE="real-time notifications"` |
 
@@ -187,6 +192,9 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 ├── commands/           # Slash command definitions
 │   ├── arch.md
 │   ├── dbg.md
+│   ├── doc.md
+│   ├── jswe.md
+│   ├── orient.md
 │   ├── pe.md
 │   ├── swe.md
 │   ├── test-health.md
@@ -201,10 +209,10 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 
 ### Models Used
 
-- **Sonnet 4.5**: `sonnet` (default for most commands)
-- **Haiku 4.5**: `claude-haiku-4-5-20251001` (for lightweight operations)
+- **Sonnet 4.5**: `sonnet` (default for most commands: /swe, /dbg, /arch, /tl, /doc, /orient)
+- **Haiku 4.5**: `haiku` (for lightweight operations: /jswe)
 
-Commands specify their model in frontmatter; defaults to Sonnet if not specified.
+Commands specify their model in frontmatter; defaults to Sonnet if not specified. Use `/jswe` instead of `/swe` for simple tasks to save cost and time.
 
 ## Customization
 
