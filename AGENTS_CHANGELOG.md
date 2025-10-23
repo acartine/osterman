@@ -1,5 +1,9 @@
 # Agents & Skills Changelog
 
+## 2025-10-23
+- Upgraded swe to Sonnet
+- Introduced jswe, a Haiku "junior swe" for simpler tasks
+
 ## 2025-10-19
 - Renamed `team-lead-pr-reviewer` agent to `tl` (big-tech style shorthand).
 - Merged `pair-programmer` and `cloud-infra-devops` into `pe` (Production Engineering) hybrid agent: safe autonomy for plan/analysis; confirm-first for high-risk.

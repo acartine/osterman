@@ -2,7 +2,7 @@
 description: Documentation agent for creating clear, well-placed user documentation
 argument-hint: FEATURE="<description>"
 allowed-tools: Bash(git:*), Read, Grep, Glob, Write, Edit
-model: claude-sonnet-4-5-20250929
+model: sonnet
 ---
 
 # Documentation Agent
@@ -47,7 +47,7 @@ Use Glob and Read to discover current docs:
   - `API.md` or `docs/api/` - API documentation
   - `CONFIGURATION.md` - Config reference
   - `CHANGELOG.md` - Version history
-  - `ARCHITECTURE.md` - System design
+  - `docs/ARCHITECTURE.md` - System design
 
 Analyze structure:
 - How are docs organized (by feature, by type, by audience)?
@@ -120,7 +120,7 @@ Based on feature type and existing structure, suggest where docs should go:
 - Update developer guide index
 
 **For Architecture/Design:**
-- Add to `ARCHITECTURE.md`
+- Add to `docs/ARCHITECTURE.md`
 - Create `docs/architecture/<decision>.md`
 - Use ADR (Architecture Decision Record) format if project uses it
 

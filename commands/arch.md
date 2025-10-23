@@ -2,7 +2,7 @@
 description: Software Architect agent for feature integration planning and system design
 argument-hint: plan FEATURE="<description>"
 allowed-tools: Read, Grep, Glob, Bash(git:*), Bash(make:*)
-model: claude-sonnet-4-5-20250929
+model: sonnet
 ---
 
 # Software Architect Agent

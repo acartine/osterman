@@ -2,7 +2,7 @@
 description: Orientation agent for understanding PRs/issues and suggesting next steps
 argument-hint: [PR=<num>] [ISSUE=<num>] [REPO=<org/name>]
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Grep, Glob
-model: claude-sonnet-4-5-20250929
+model: sonnet
 ---
 
 # Orientation Agent

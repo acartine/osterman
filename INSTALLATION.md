@@ -278,7 +278,7 @@ cd ~/.claude/commands
 cat > my-command.md <<'EOF'
 ---
 description: My custom command
-model: claude-sonnet-4-5-20250929
+model: sonnet
 ---
 
 # My Command

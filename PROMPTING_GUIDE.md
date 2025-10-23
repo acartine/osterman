@@ -4,7 +4,8 @@
 **Pick the Right Agent**
 - `tl`: PR reviews, dependency maps, merge readiness.
 - `pe`: Production Engineering (hybrid) — Terraform plan reviews, CI/CD infra, containers/K8s; confirm-first for high-risk ops.
-- `swe`: Implement specs via standard branch workflow.
+- `swe`: Implement complex features via standard branch workflow (Sonnet-powered).
+- `jswe`: Implement simple tasks and bug fixes quickly (Haiku-powered, faster and cheaper).
 - `test-engineer`: Improve tests, reduce flakiness, analyze test health.
 - `code-debugger`: Diagnose runtime errors and unexpected behavior.
 - `software-architect`: Integration plans, migrations, architecture decisions.
@@ -15,7 +16,8 @@
 - `/pe apply DIR=./infra WORKSPACE=prod` — Confirm-first flow for prod apply
 - `/tl review REPO=org/name PR=123` — PR review, may merge if green/low risk
 - `/tl triage REPO=org/name` — Issue triage and dependency mapping
-- `/swe impl TASK="feature-x" SPEC=<link-or-notes>` — Implementation workflow
+- `/swe impl TASK="feature-x" SPEC=<link-or-notes>` — Implementation workflow for complex features
+- `/jswe impl TASK="fix-bug" SPEC="add null check"` — Fast implementation for simple tasks
 - `/test health` — Test health report
 - `/dbg failing test LoginFlow` — Debugger requests stack/repro and proposes fixes
 - `/arch plan FEATURE="realtime notifications"` — Architecture plan
@@ -29,8 +31,10 @@
   - "Agent: pe. Run tf_plan_only in ./infra env 'staging' (bin/tf-plan-only). Summarize adds/changes/destroys, highlight IAM/network/cost risks. Do not apply."
 - Debugging
   - "Agent: code-debugger. Context: failing unit test Y. Expected vs actual, stack trace here: ... Scope relevant files and propose fixes + verification steps."
-- Implementation
+- Implementation (complex features)
   - "Agent: swe. Spec: implement feature X per doc link. Follow impl_branch_workflow (bin/impl-branch-workflow). Open DRAFT PR and iterate until green."
+- Implementation (simple tasks)
+  - "Agent: jswe. Spec: fix bug Y by adding validation. Follow impl_branch_workflow. Open DRAFT PR and iterate until green. Use Haiku for speed."
 - Test health
   - "Agent: test-engineer. Analyze last 10 CI runs. Produce test health report: flakiest tests, slowest suites, top fixes. You may use bin/test-health-report."
 - Architecture
