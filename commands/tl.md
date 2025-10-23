@@ -76,11 +76,6 @@ Triage open issues and map dependencies.
 6. Recommend order of work
 7. Output prioritized list with reasoning
 
-### merge
-Merge a pull request after validation.
-
-**Instructions**:
-
 ### ticket
 Create a new GitHub issue with proper formatting based on type.
 
