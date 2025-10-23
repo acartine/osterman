@@ -89,6 +89,7 @@
       "Bash(yarn:*)",
       "Bash(zip:*)",
       "Read",
+      "Fetch",
       "Grep",
       "Glob",
       "SlashCommand(/jswe:*)",
