@@ -54,6 +54,7 @@
       "Bash(go:*)",
       "Bash(grep:*)",
       "Bash(head:*)",
+      "Bash(jq:*)",
       "Bash(ls:*)",
       "Bash(lsof:*)",
       "Bash(make:*)",
@@ -90,15 +91,15 @@
       "Read",
       "Grep",
       "Glob",
-      "SlashCommand:/jswe:*",
-      "SlashCommand:/swe:*",
-      "SlashCommand:/dbg:*",
-      "SlashCommand:/arch:*",
-      "SlashCommand:/tl:*",
-      "SlashCommand:/pe:*",
-      "SlashCommand:/test-health:*",
-      "SlashCommand:/orient:*",
-      "SlashCommand:/doc:*"
+      "SlashCommand(/jswe:*)",
+      "SlashCommand(/swe:*)",
+      "SlashCommand(/dbg:*)",
+      "SlashCommand(/arch:*)",
+      "SlashCommand(/tl:*)",
+      "SlashCommand(/pe:*)",
+      "SlashCommand(/test-health:*)",
+      "SlashCommand(/orient:*)",
+      "SlashCommand(/doc:*)"
     ],
     "ask": [
     ]
