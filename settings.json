@@ -1,7 +1,7 @@
 {
   "comment": "Settings for Iteration 4 - With safety hook and telemetry",
 
-  "hooks ": {
+  "hooks": {
     "PreToolUse": [
       {
         "comment": "Block dangerous infrastructure operations",
