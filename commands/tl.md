@@ -1,6 +1,6 @@
 ---
-description: Team Lead agent for PR review, issue triage, and merge decisions
-argument-hint: review|triage|merge [REPO=<org/name>] [PR=<num>]
+description: Team Lead agent for PR review, issue triage, ticket creation, and merge decisions
+argument-hint: review|triage|merge|ticket [REPO=<org/name>] [PR=<num>] [TYPE=<type>] [DESC=<description>]
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Grep, Glob
 model: sonnet
 ---
@@ -19,6 +19,7 @@ Expected format:
 - `review PR=123 [REPO=org/name]` - Review a pull request (REPO optional, defaults to current repo)
 - `triage [REPO=org/name]` - Triage open issues (REPO optional, defaults to current repo)
 - `merge PR=123 [REPO=org/name]` - Merge a PR (after review, REPO optional)
+- `ticket TYPE=<type> DESC=<description> [REPO=org/name]` - Create a new issue (REPO optional)
 
 ## Supported Operations
 
@@ -74,6 +75,23 @@ Triage open issues and map dependencies.
 5. Map dependencies between issues
 6. Recommend order of work
 7. Output prioritized list with reasoning
+
+### ticket
+Create a new GitHub issue with proper formatting based on type.
+
+**Instructions**:
+1. Parse TYPE, DESC, and optional REPO from arguments
+   - If REPO not provided, detect from current git remote:
+     ```bash
+     git remote get-url origin | sed -E 's#.*[:/](.+/.+)\.git#\1#'
+     ```
+2. Validate issue type (using gh_issue_create skill)
+   - Supported types: bug, feature, enhancement, docs, test, refactor
+3. Create issue with proper template based on type:
+   ```bash
+   gh issue create --repo <org/name> --title "[TYPE] DESC" --body "..."
+   ```
+4. Return issue URL and next steps
 
 ### merge
 Merge a pull request after validation.
@@ -143,8 +161,14 @@ Merge a pull request after validation.
 
 # Merge low-risk PR with green CI
 /tl merge PR=42 REPO=acme/api
+
+# Create a bug report
+/tl ticket TYPE='bug' DESC='Search function returns incorrect results'
+
+# Request a new feature
+/tl ticket TYPE='feature' DESC='Add dark mode support'
 ```
 
 ## Reference Documentation
-- **Skills**: `skills/gh_pr_review.md`, `skills/gh_pr_merge.md`
+- **Skills**: `skills/gh_pr_review.md`, `skills/gh_pr_merge.md`, `skills/gh_issue_create.md`
 - **Agent**: `agents/tl.md` for full autonomy policy
