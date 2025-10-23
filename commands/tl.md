@@ -170,5 +170,5 @@ Merge a pull request after validation.
 ```
 
 ## Reference Documentation
-- **Skills**: `skills/gh_pr_review.md`, `skills/gh_pr_merge.md`, `skills/gh_issue_create.md`
+- **Skills**: `skills/gh_pr_review.md`, `skills/gh_pr_merge.md`, `skills/gh_issue_create.md`, `skills/gh_pr_view.md`
 - **Agent**: `agents/tl.md` for full autonomy policy
