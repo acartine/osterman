@@ -1,7 +1,7 @@
 {
   "comment": "Settings for Iteration 4 - With safety hook and telemetry",
 
-  "hooks": {
+  "hooks ": {
     "PreToolUse": [
       {
         "comment": "Block dangerous infrastructure operations",
@@ -55,8 +55,10 @@
       "Bash(grep:*)",
       "Bash(head:*)",
       "Bash(ls:*)",
+      "Bash(lsof:*)",
       "Bash(make:*)",
       "Bash(mkdir:*)",
+      "Bash(nc:*)",
       "Bash(node:*)",
       "Bash(npm:*)",
       "Bash(npx:*)",
@@ -75,6 +77,7 @@
       "Bash(tail:*)",
       "Bash(task:*)",
       "Bash(terraform:*)",
+      "Bash(tee:*)",
       "Bash(test:*)",
       "Bash(timeout:*)",
       "Bash(tsc:*)",
@@ -86,11 +89,18 @@
       "Bash(zip:*)",
       "Read",
       "Grep",
-      "Glob"
+      "Glob",
+      "SlashCommand:/jswe:*",
+      "SlashCommand:/swe:*",
+      "SlashCommand:/dbg:*",
+      "SlashCommand:/arch:*",
+      "SlashCommand:/tl:*",
+      "SlashCommand:/pe:*",
+      "SlashCommand:/test-health:*",
+      "SlashCommand:/orient:*",
+      "SlashCommand:/doc:*"
     ],
     "ask": [
-      "Write",
-      "Edit"
     ]
   }
 }
