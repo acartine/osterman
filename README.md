@@ -281,9 +281,18 @@ Edit `settings.json` to add new allowed commands:
 - Document safety implications
 - Follow existing patterns and conventions
 
-## Specification
+## Documentation
 
-See [EXECUTION.md](EXECUTION.md) for the original implementation specification and as-built documentation.
+### User Guides
+- **[INSTALLATION.md](INSTALLATION.md)** - Detailed installation instructions
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Common issues and solutions
+- **[PROMPTING_GUIDE.md](PROMPTING_GUIDE.md)** - How to use commands effectively
+- **[BIN_SCRIPTS.md](BIN_SCRIPTS.md)** - Helper scripts in `bin/` directory
+
+### Technical Documentation
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and component interactions
+- **[docs/RISK_REGISTER.md](docs/RISK_REGISTER.md)** - Safety policies and risk assessment
+- **[docs/EXECUTION.md](docs/EXECUTION.md)** - Implementation specification and as-built documentation
 
 ## License
 

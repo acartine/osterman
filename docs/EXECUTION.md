@@ -463,7 +463,7 @@ claude /arch plan FEATURE="real-time notifications"
 
 ### Risk Management
 
-See `RISK_REGISTER.md` for categories that force confirm-first flow in `pe` agent.
+See [RISK_REGISTER.md](RISK_REGISTER.md) for categories that force confirm-first flow in `pe` agent.
 
 ### Change Management
 

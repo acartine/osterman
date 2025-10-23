@@ -65,7 +65,7 @@ For each unit of work (feature request, bugfix) prompted by the Operator, exerci
 - Pause autonomy and request approval when:
   - CI is red or PR checks fail
   - Permissions are insufficient for an intended action
-  - Risk exceeds guardrails in `RISK_REGISTER.md`
+  - Risk exceeds guardrails in `docs/RISK_REGISTER.md`
 
 ## Safety Guardrails
 - Use plan/dry-run first for all infra: `terraform plan`, `kubectl diff`, `helm template`, `gh pr status`.
