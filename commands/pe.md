@@ -96,5 +96,5 @@ Run Terraform apply with explicit approval required.
 ```
 
 ## Reference Documentation
-- **Skills**: `skills/tf_plan_only.md`, `skills/tf_apply_with_approval.md`
+- **Skills**: `skills/tf_plan_only.md`, `skills/tf_apply_with_approval.md`, `skills/iac.md` for infrastructure as code best practices
 - **Agent**: `agents/pe.md` for full autonomy policy
