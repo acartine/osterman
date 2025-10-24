@@ -16,15 +16,15 @@ Review pull requests, triage issues, and make merge decisions based on quality a
 User provided: $ARGUMENTS
 
 Expected format:
-- `review PR=123 [REPO=org/name]` - Review a pull request (REPO optional, defaults to current repo)
+- `review PR=123 [REPO=org/name]` - Review a pull request and post findings as comment (REPO optional, defaults to current repo)
 - `triage [REPO=org/name]` - Triage open issues (REPO optional, defaults to current repo)
-- `merge PR=123 [REPO=org/name]` - Merge a PR (after review, REPO optional)
+- `review_and_merge PR=123 [REPO=org/name]` - Review PR, monitor for updates, and auto-merge when ready (REPO optional)
 - `ticket TYPE=<type> DESC=<description> [REPO=org/name]` - Create a new issue (REPO optional)
 
 ## Supported Operations
 
 ### review
-Perform comprehensive pull request review with structured feedback.
+Perform comprehensive pull request review and post findings as PR comment.
 
 **Instructions**:
 1. Parse PR from arguments, and REPO if provided
@@ -32,9 +32,9 @@ Perform comprehensive pull request review with structured feedback.
      ```bash
      git remote get-url origin | sed -E 's#.*[:/](.+/.+)\.git#\1#'
      ```
-2. Fetch PR information:
+2. Fetch PR information (including headRefOid for change detection):
    ```bash
-   gh pr view <num> --repo <org/name> --json number,title,author,mergeable,state,url
+   gh pr view <num> --repo <org/name> --json number,title,author,mergeable,state,url,headRefOid
    gh pr diff <num> --repo <org/name>
    gh pr checks <num> --repo <org/name>
    ```
@@ -53,10 +53,23 @@ Perform comprehensive pull request review with structured feedback.
    - **Low Risk**: <100 lines, well-tested, green CI, docs updated
    - **Medium Risk**: 100-500 lines, some test gaps, mostly green CI
    - **High Risk**: >500 lines, missing tests, red CI, breaking changes
-6. Provide structured output:
+6. Post review to PR using appropriate action:
+   - **Approve** (Low/Medium risk, no Critical/Important findings):
+     ```bash
+     gh pr review <num> --repo <org/name> --approve --body "<review_body>"
+     ```
+   - **Request Changes** (Critical findings or High risk):
+     ```bash
+     gh pr review <num> --repo <org/name> --request-changes --body "<review_body>"
+     ```
+   - **Comment** (Important findings, needs discussion):
+     ```bash
+     gh pr review <num> --repo <org/name> --comment --body "<review_body>"
+     ```
+7. Review body should include:
    - Summary (what this PR does)
    - Risk Assessment (Low/Medium/High with reasoning)
-   - Findings (Critical/Important/Suggestions)
+   - Findings (Critical/Important/Suggestions with file:line references)
    - Merge Readiness (Ready / Not Ready / Ready with changes)
    - Next Steps (what author should do)
 
@@ -93,8 +106,8 @@ Create a new GitHub issue with proper formatting based on type.
    ```
 4. Return issue URL and next steps
 
-### merge
-Merge a pull request after validation.
+### review_and_merge
+Review PR, monitor for updates if changes requested, and auto-merge when ready.
 
 **Instructions**:
 1. Parse PR from arguments, and REPO if provided
@@ -102,19 +115,44 @@ Merge a pull request after validation.
      ```bash
      git remote get-url origin | sed -E 's#.*[:/](.+/.+)\.git#\1#'
      ```
-2. First run a review (call review operation)
-3. Verify:
-   - All CI checks are green
-   - No blocking review comments
-   - Risk level is acceptable (Low or Medium with all Critical items resolved)
-   - Required approvals present
-4. If all checks pass:
-   - Ask user: "PR looks good. Ready to merge?"
-   - If confirmed: `gh pr merge <num> --repo <org/name> --squash` (or merge/rebase as configured)
-5. If checks fail:
-   - List blockers
-   - Do NOT merge
-   - Recommend next steps
+2. Perform initial review (use review operation above)
+   - This posts review findings as a PR comment
+   - Returns review_status: "approved" | "changes_requested" | "comment"
+   - Captures initial headRefOid for change detection
+
+3. If review_status is "changes_requested":
+   - Inform user: "Changes requested. Monitoring PR for updates..."
+   - Start monitoring loop (max 30 minutes):
+     ```bash
+     # Poll every 30 seconds
+     current_sha=$(gh pr view <num> --repo <org/name> --json headRefOid -q .headRefOid)
+     if [ "$current_sha" != "$initial_sha" ]; then
+       # PR has been updated, perform new review
+       break
+     fi
+     sleep 30
+     ```
+   - When PR updates detected, perform new review and continue
+   - If timeout (30 min) reached, inform user and exit
+
+4. If review_status is "approved":
+   - Verify merge readiness:
+     - All CI checks are green: `gh pr checks <num> --repo <org/name>`
+     - Risk level is Low or Medium
+     - All Critical findings resolved
+   - If ready to merge:
+     - Execute merge: `gh pr merge <num> --repo <org/name> --squash`
+     - Post confirmation: "PR #<num> successfully merged!"
+   - If not ready:
+     - List blockers (red CI, unresolved findings)
+     - Do NOT merge
+     - Recommend next steps
+
+5. If review_status is "comment":
+   - This means Important findings need discussion
+   - Inform user: "Review posted with important findings. Waiting for author response."
+   - Do NOT auto-merge
+   - User should re-run review_and_merge after discussion
 
 ## Safety Guardrails
 
@@ -146,9 +184,9 @@ Merge a pull request after validation.
 /tl triage REPO=acme/frontend
 ```
 
-**Merge a reviewed PR:**
+**Review and auto-merge a PR:**
 ```
-/tl merge PR=123
+/tl review_and_merge PR=123
 ```
 
 **Common scenarios:**
@@ -159,8 +197,8 @@ Merge a pull request after validation.
 # Weekly issue grooming
 /tl triage
 
-# Merge low-risk PR with green CI
-/tl merge PR=42 REPO=acme/api
+# Review and auto-merge low-risk PR with green CI
+/tl review_and_merge PR=42 REPO=acme/api
 
 # Create a bug report
 /tl ticket TYPE='bug' DESC='Search function returns incorrect results'
