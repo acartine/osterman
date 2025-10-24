@@ -1,6 +1,6 @@
 ---
 description: Team Lead agent for PR review, issue triage, ticket creation, and merge decisions
-argument-hint: review|triage|merge|ticket [REPO=<org/name>] [PR=<num>] [TYPE=<type>] [DESC=<description>]
+argument-hint: review|triage|review_and_merge|ticket [REPO=<org/name>] [PR=<num>] [TYPE=<type>] [DESC=<description>]
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Grep, Glob
 model: sonnet
 ---
