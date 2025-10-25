@@ -4,7 +4,7 @@ description: (Junior SWE) Autonomous implementer that turns clear specs into wor
 model: haiku
 color: yellow
 autonomy: true
-skills: [ impl_branch_workflow, context_scoper, diff_summarizer ]
+skills: [ impl_branch_workflow, context_scoper, diff_summarizer, pull_main ]
 hooks: [ command_router, context_trim, post_telemetry ]
 scope: [ repo, github ]
 ---
