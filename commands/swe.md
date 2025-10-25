@@ -1,7 +1,7 @@
 ---
 description: Software Engineering agent for feature implementation with specs
-argument-hint: impl TASK="<description>" [SPEC=<url-or-notes>]
-allowed-tools: Bash(git:*), Bash(make:*), Bash(npm:*), Bash(pytest:*), Read, Grep, Glob, Write, Edit
+argument-hint: impl TASK="<description>" [SPEC=<url-or-notes>] | ticket <issue-number>
+allowed-tools: Bash(git:*), Bash(make:*), Bash(npm:*), Bash(pytest:*), Bash(gh:*), Read, Grep, Glob, Write, Edit
 model: sonnet
 ---
 
@@ -17,8 +17,27 @@ User provided: $ARGUMENTS
 
 Expected format:
 - `impl TASK="feature-x" SPEC=<url-or-notes>` - Implement a feature with specification
+- `ticket <issue-number>` - Implement a feature based on a GitHub issue
 
 ## Instructions
+
+### 0. Parse Arguments
+First, determine which workflow to follow:
+
+**For `impl` workflow:**
+- Parse TASK and SPEC from arguments
+- Proceed to Preparation Phase
+
+**For `ticket` workflow:**
+- Extract issue number from arguments
+- Auto-detect repository from git remote: `git remote get-url origin`
+- Parse org/repo from URL
+- Fetch issue details: `gh issue view <issue-number> --repo <org/repo> --json title,body,number`
+- Use issue title and body as the specification:
+  - TASK: Derive from issue title (convert to kebab-case for branch name)
+  - SPEC: Issue body content
+- Create branch named: `feature/issue-<number>-<short-description>`
+- Proceed to Preparation Phase with derived TASK and SPEC
 
 Follow the Agent Development Flow from CLAUDE.md:
 
@@ -36,10 +55,9 @@ Follow the Agent Development Flow from CLAUDE.md:
 - Branch name should be descriptive and kebab-case
 
 ### 3. Implementation Phase
-- Parse TASK and SPEC from arguments
+- Implement the feature according to TASK and SPEC (already parsed in step 0)
 - If SPEC is a URL, fetch and analyze the specification
-- If SPEC is notes, use them as requirements
-- Implement the feature according to spec
+- If SPEC is notes/issue body, use them as requirements
 - Follow existing code patterns and conventions
 - Keep changes focused and incremental
 
@@ -68,6 +86,10 @@ Follow the Agent Development Flow from CLAUDE.md:
   ```markdown
   ## Summary
   <1-3 bullet points of what changed>
+
+  ## Related Issue
+  <For ticket workflow: "Closes #<issue-number>">
+  <For impl workflow: Add if relevant, otherwise omit this section>
 
   ## Test Plan
   - [ ] Unit tests pass
@@ -139,9 +161,17 @@ Follow the Agent Development Flow from CLAUDE.md:
 /swe impl TASK="fix-login-redirect" SPEC="After login, redirect to original requested page instead of home"
 ```
 
+**Work on a GitHub issue (ticket workflow):**
+```
+/swe ticket 118
+```
+
 **Common scenarios:**
 ```
-# Implement feature from GitHub issue
+# Implement feature from GitHub issue using ticket workflow (recommended)
+/swe ticket 123
+
+# Implement feature from GitHub issue using impl workflow (alternative)
 /swe impl TASK="oauth-integration" SPEC=https://github.com/org/repo/issues/123
 
 # Quick enhancement with inline spec
