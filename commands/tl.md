@@ -107,7 +107,9 @@ Create a new GitHub issue with proper formatting based on type.
 4. Return issue URL and next steps
 
 ### review_and_merge
-Review PR, monitor for updates if changes requested, and auto-merge when ready.
+Review PR, and auto-merge if the agent's review approves it. Monitor for updates if changes are requested.
+
+**Important**: This flow does NOT check for or require formal GitHub approvals from other reviewers. The agent's own review decision drives the merge action.
 
 **Instructions**:
 1. Parse PR from arguments, and REPO if provided
@@ -120,7 +122,19 @@ Review PR, monitor for updates if changes requested, and auto-merge when ready.
    - Returns review_status: "approved" | "changes_requested" | "comment"
    - Captures initial headRefOid for change detection
 
-3. If review_status is "changes_requested":
+3. If review_status is "approved":
+   - The agent has approved the PR - proceed directly to merge
+   - Verify CI checks are green: `gh pr checks <num> --repo <org/name>`
+   - If all checks pass:
+     - Execute merge immediately: `gh pr merge <num> --repo <org/name> --squash`
+     - Post confirmation: "PR #<num> successfully merged!"
+   - If CI checks fail:
+     - List failing checks
+     - Do NOT merge
+     - Inform user: "Approval granted but CI checks are failing. Cannot merge."
+
+4. If review_status is "changes_requested":
+   - The agent has identified issues that must be fixed
    - Inform user: "Changes requested. Monitoring PR for updates..."
    - Start monitoring loop (max 30 minutes):
      ```bash
@@ -132,24 +146,11 @@ Review PR, monitor for updates if changes requested, and auto-merge when ready.
      fi
      sleep 30
      ```
-   - When PR updates detected, perform new review and continue
+   - When PR updates detected, perform new review and continue from step 2
    - If timeout (30 min) reached, inform user and exit
 
-4. If review_status is "approved":
-   - Verify merge readiness:
-     - All CI checks are green: `gh pr checks <num> --repo <org/name>`
-     - Risk level is Low or Medium
-     - All Critical findings resolved
-   - If ready to merge:
-     - Execute merge: `gh pr merge <num> --repo <org/name> --squash`
-     - Post confirmation: "PR #<num> successfully merged!"
-   - If not ready:
-     - List blockers (red CI, unresolved findings)
-     - Do NOT merge
-     - Recommend next steps
-
 5. If review_status is "comment":
-   - This means Important findings need discussion
+   - The agent has posted important findings that need discussion
    - Inform user: "Review posted with important findings. Waiting for author response."
    - Do NOT auto-merge
    - User should re-run review_and_merge after discussion
