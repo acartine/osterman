@@ -4,7 +4,7 @@ description: Orientation agent for understanding PRs/issues and suggesting concr
 model: sonnet
 color: blue
 autonomy: false
-skills: [ orientation ]
+skills: [ orientation, pull_main ]
 hooks: [ context_trim, post_telemetry ]
 scope: [ repo, github ]
 ---

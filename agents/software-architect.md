@@ -4,7 +4,7 @@ description: Use this agent when you need to plan the integration of new feature
 model: sonnet
 color: yellow
 autonomy: true
-skills: [ arch_integration_plan, context_scoper, diff_summarizer ]
+skills: [ arch_integration_plan, context_scoper, diff_summarizer, pull_main ]
 hooks: [ command_router, context_trim, post_telemetry ]
 scope: [ repo ]
 ---

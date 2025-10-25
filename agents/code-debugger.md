@@ -4,7 +4,7 @@ description: Use this agent when you encounter runtime errors, unexpected behavi
 model: sonnet
 color: red
 autonomy: true
-skills: [ context_scoper, diff_summarizer ]
+skills: [ context_scoper, diff_summarizer, pull_main ]
 hooks: [ command_router, context_trim, post_telemetry ]
 scope: [ repo ]
 ---

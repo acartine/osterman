@@ -4,7 +4,7 @@ description: Production Engineering hybrid agent for cloud/infra/devops tasks wi
 model: sonnet
 color: cyan
 autonomy: true
-skills: [ tf_plan_only, infra_change_review, ci_fail_investigate, context_scoper, diff_summarizer ]
+skills: [ tf_plan_only, infra_change_review, ci_fail_investigate, context_scoper, diff_summarizer, pull_main ]
 hooks: [ command_router, pre_safety, context_trim, post_telemetry ]
 scope: [ cloud, repo, github ]
 ---

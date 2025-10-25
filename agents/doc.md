@@ -4,7 +4,7 @@ description: Documentation agent for creating clear, well-placed user documentat
 model: sonnet
 color: green
 autonomy: false
-skills: [ documentation ]
+skills: [ documentation, pull_main ]
 hooks: [ context_trim, post_telemetry ]
 scope: [ repo ]
 ---

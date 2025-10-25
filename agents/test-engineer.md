@@ -4,7 +4,7 @@ description: Use this agent when you need to create, review, or improve test sui
 model: sonnet
 color: blue
 autonomy: true
-skills: [ test_health_report, context_scoper, diff_summarizer ]
+skills: [ test_health_report, context_scoper, diff_summarizer, pull_main ]
 hooks: [ command_router, context_trim, post_telemetry ]
 scope: [ repo ]
 ---
