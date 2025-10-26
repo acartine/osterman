@@ -1,6 +1,6 @@
 ---
 description: Team Lead agent for PR review, issue triage, ticket creation, and merge decisions
-argument-hint: review|triage|review_and_merge|ticket [REPO=<org/name>] [PR=<num>] [TYPE=<type>] [DESC=<description>]
+argument-hint: review|triage|review_and_merge|ticket <num>|[PR=<num>] [REPO=<org/name>] [TYPE=<type>] [DESC=<description>]
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Grep, Glob
 model: sonnet
 ---
@@ -16,9 +16,9 @@ Review pull requests, triage issues, and make merge decisions based on quality a
 User provided: $ARGUMENTS
 
 Expected format:
-- `review PR=123 [REPO=org/name]` - Review a pull request and post findings as comment (REPO optional, defaults to current repo)
+- `review 123 [REPO=org/name]` or `review PR=123 [REPO=org/name]` - Review a pull request and post findings as comment (REPO optional, defaults to current repo)
 - `triage [REPO=org/name]` - Triage open issues (REPO optional, defaults to current repo)
-- `review_and_merge PR=123 [REPO=org/name]` - Review PR, monitor for updates, and auto-merge when ready (REPO optional)
+- `review_and_merge 123 [REPO=org/name]` or `review_and_merge PR=123 [REPO=org/name]` - Review PR, monitor for updates, and auto-merge when ready (REPO optional)
 - `ticket TYPE=<type> DESC=<description> [REPO=org/name]` - Create a new issue (REPO optional)
 
 ## Supported Operations
@@ -28,6 +28,9 @@ Perform comprehensive pull request review and post findings as PR comment.
 
 **Instructions**:
 1. Parse PR from arguments, and REPO if provided
+   - PR can be specified as just a number (e.g., `123`) or as `PR=123`
+   - If first argument is a number, use it as the PR number
+   - Otherwise, extract from `PR=<num>` format
    - If REPO not provided, detect from current git remote:
      ```bash
      git remote get-url origin | sed -E 's#.*[:/](.+/.+)\.git#\1#'
@@ -113,6 +116,9 @@ Review PR, and auto-merge if the agent's review approves it. Monitor for updates
 
 **Instructions**:
 1. Parse PR from arguments, and REPO if provided
+   - PR can be specified as just a number (e.g., `123`) or as `PR=123`
+   - If first argument is a number, use it as the PR number
+   - Otherwise, extract from `PR=<num>` format
    - If REPO not provided, detect from current git remote:
      ```bash
      git remote get-url origin | sed -E 's#.*[:/](.+/.+)\.git#\1#'
@@ -167,12 +173,12 @@ Review PR, and auto-merge if the agent's review approves it. Monitor for updates
 
 **Review a PR in current repo:**
 ```
-/tl review PR=123
+/tl review 123
 ```
 
 **Review a PR in specific repo:**
 ```
-/tl review PR=456 REPO=acme/backend
+/tl review 456 REPO=acme/backend
 ```
 
 **Triage issues in current repo:**
@@ -187,19 +193,19 @@ Review PR, and auto-merge if the agent's review approves it. Monitor for updates
 
 **Review and auto-merge a PR:**
 ```
-/tl review_and_merge PR=123
+/tl review_and_merge 123
 ```
 
 **Common scenarios:**
 ```
 # Daily PR review routine
-/tl review PR=42
+/tl review 42
 
 # Weekly issue grooming
 /tl triage
 
 # Review and auto-merge low-risk PR with green CI
-/tl review_and_merge PR=42 REPO=acme/api
+/tl review_and_merge 42 REPO=acme/api
 
 # Create a bug report
 /tl ticket TYPE='bug' DESC='Search function returns incorrect results'
