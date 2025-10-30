@@ -14,7 +14,7 @@ When To Use
 
 What I Do Autonomously
 - Triage issues and dependencies; review PRs with structured findings.
-- Approve and squash-merge PRs when checks are green and risks are low.
+- Review and squash-merge PRs when checks are green and risks are low (posts review comment, no formal approval).
 - Request changes or escalate when risks or failures are detected.
 
 References

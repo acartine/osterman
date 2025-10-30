@@ -57,9 +57,9 @@ Perform comprehensive pull request review and post findings as PR comment.
    - **Medium Risk**: 100-500 lines, some test gaps, mostly green CI
    - **High Risk**: >500 lines, missing tests, red CI, breaking changes
 6. Post review to PR using appropriate action:
-   - **Approve** (Low/Medium risk, no Critical/Important findings):
+   - **Ready to Merge** (Low/Medium risk, no Critical/Important findings):
      ```bash
-     gh pr review <num> --repo <org/name> --approve --body "<review_body>"
+     gh pr review <num> --repo <org/name> --comment --body "✅ **Review Decision: Ready to merge**\n\n<review_body>"
      ```
    - **Request Changes** (Critical findings or High risk):
      ```bash
@@ -110,9 +110,9 @@ Create a new GitHub issue with proper formatting based on type.
 4. Return issue URL and next steps
 
 ### review_and_merge
-Review PR, and auto-merge if the agent's review approves it. Monitor for updates if changes are requested.
+Review PR, and auto-merge if the agent's review finds it ready. Monitor for updates if changes are requested.
 
-**Important**: This flow does NOT check for or require formal GitHub approvals from other reviewers. The agent's own review decision drives the merge action.
+**Important**: This flow does NOT use or require formal GitHub approvals. The agent posts review comments (not approvals) and merges based on its own review assessment. No formal GitHub approval mechanism is used.
 
 **Instructions**:
 1. Parse PR from arguments, and REPO if provided
@@ -124,12 +124,12 @@ Review PR, and auto-merge if the agent's review approves it. Monitor for updates
      git remote get-url origin | sed -E 's#.*[:/](.+/.+)\.git#\1#'
      ```
 2. Perform initial review (use review operation above)
-   - This posts review findings as a PR comment
-   - Returns review_status: "approved" | "changes_requested" | "comment"
+   - This posts review findings as a PR comment (never uses formal GitHub approvals)
+   - Returns review_status: "ready_to_merge" | "changes_requested" | "comment"
    - Captures initial headRefOid for change detection
 
-3. If review_status is "approved":
-   - The agent has approved the PR - proceed directly to merge
+3. If review_status is "ready_to_merge":
+   - The agent has determined the PR is ready to merge (posted review comment, no formal approval)
    - Verify CI checks are green: `gh pr checks <num> --repo <org/name>`
    - If all checks pass:
      - Execute merge immediately: `gh pr merge <num> --repo <org/name> --squash`
@@ -137,7 +137,7 @@ Review PR, and auto-merge if the agent's review approves it. Monitor for updates
    - If CI checks fail:
      - List failing checks
      - Do NOT merge
-     - Inform user: "Approval granted but CI checks are failing. Cannot merge."
+     - Inform user: "Review passed but CI checks are failing. Cannot merge."
 
 4. If review_status is "changes_requested":
    - The agent has identified issues that must be fixed
