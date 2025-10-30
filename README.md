@@ -69,17 +69,28 @@ make test
 ### Try a Command
 
 ```bash
-# From any project with .claude config
-claude /test-health
+# Team Lead: Review and merge a PR
+claude /tl review_and_merge 123
 
-# Production Engineering terraform plan
-claude /pe plan DIR=./infra WORKSPACE=staging
+# Team Lead: Create a bug report
+claude /tl ticket TYPE='bug' DESC='Login fails with OAuth providers'
 
-# Implement a complex feature (uses Sonnet)
-claude /swe impl TASK="add-feature" SPEC="Add user authentication"
+# Software Engineer: Implement from GitHub issue (Sonnet - for complex tasks)
+claude /swe ticket 456
 
-# Quick bug fix (uses Haiku - faster and cheaper)
+# Software Engineer: Implement with inline spec
+claude /swe impl TASK="add-rate-limiting" SPEC="Add rate limiting to API endpoints"
+
+# Junior SWE: Quick bug fix (Haiku - faster and cheaper)
 claude /jswe impl TASK="fix-null-check" SPEC="Add null check in getUserById"
+
+# Junior SWE: Simple issue implementation
+claude /jswe ticket 42
+
+# Other agents
+claude /test-health
+claude /pe plan DIR=./infra WORKSPACE=staging
+claude /dbg "500 error on /api/users endpoint"
 ```
 
 ### Updating
@@ -92,21 +103,236 @@ cd ~/.claude  # or cd /path/to/project/.claude
 git pull
 ```
 
-## Command Reference
+## Agent Reference
+
+### `/tl` - Team Lead Agent
+
+**Purpose**: Autonomous PR review, issue triage, and merge management
+**Model**: Sonnet 4.5
+**Autonomy**: Full - reviews and merges without formal GitHub approvals
+
+**Operations:**
+
+#### `review` - Comprehensive PR Review
+Reviews a PR and posts structured findings as a comment.
+
+```bash
+# Review PR in current repo
+/tl review 123
+
+# Review PR in specific repo
+/tl review 456 REPO=acme/backend
+
+# Alternative syntax
+/tl review PR=789 REPO=acme/frontend
+```
+
+**What it does:**
+- Analyzes correctness, security, performance, tests, docs, code quality
+- Categorizes findings: Critical / Important / Suggestions
+- Assesses risk level: Low / Medium / High
+- Posts review comment with structured feedback
+- Includes file:line references for all findings
+
+#### `review_and_merge` - Auto-Merge After Review
+Reviews a PR and automatically merges if ready (no formal approval needed).
+
+```bash
+# Review and auto-merge PR in current repo
+/tl review_and_merge 123
+
+# Review and merge PR in specific repo
+/tl review_and_merge 456 REPO=acme/api
+```
+
+**What it does:**
+- Performs comprehensive review
+- If ready: Posts comment with decision marker, verifies CI, merges immediately
+- If changes needed: Posts review, monitors for updates, re-reviews automatically
+- If discussion needed: Posts comment, waits for manual re-run
+- **Note**: Uses comment-based workflow (no formal GitHub approvals)
+
+#### `triage` - Issue Prioritization
+Triages open issues and maps dependencies.
+
+```bash
+# Triage issues in current repo
+/tl triage
+
+# Triage issues in specific repo
+/tl triage REPO=acme/backend
+```
+
+**What it does:**
+- Fetches all open issues
+- Categorizes by type: bug, feature, tech-debt, question
+- Assesses priority: impact, effort, blockers
+- Maps dependencies between issues
+- Recommends order of work
+
+#### `ticket` - Create GitHub Issue
+Creates a new GitHub issue with proper formatting.
+
+```bash
+# Create a bug report
+/tl ticket TYPE='bug' DESC='Search function returns incorrect results'
+
+# Request a new feature
+/tl ticket TYPE='feature' DESC='Add dark mode support' REPO=acme/frontend
+
+# Other types: enhancement, docs, test, refactor
+/tl ticket TYPE='docs' DESC='Document API authentication flow'
+```
+
+**What it does:**
+- Creates issue with type-specific template
+- Auto-formats title and body
+- Returns issue URL
+- Suggests next steps
+
+---
+
+### `/swe` - Software Engineering Agent
+
+**Purpose**: Complex feature implementation with full workflow
+**Model**: Sonnet 4.5
+**Autonomy**: Full - implements, tests, creates PRs
+
+**Operations:**
+
+#### `impl` - Feature Implementation
+Implements a feature from specification through DRAFT PR.
+
+```bash
+# Implement feature with URL spec
+/swe impl TASK="user-profile-page" SPEC=https://github.com/acme/specs/issues/42
+
+# Implement feature with inline spec
+/swe impl TASK="add-pagination" SPEC="Add pagination to /users endpoint with limit/offset params"
+
+# Implement bug fix
+/swe impl TASK="fix-login-redirect" SPEC="After login, redirect to original requested page instead of home"
+
+# Complex feature requiring architectural decisions
+/swe impl TASK="oauth-integration" SPEC="Add OAuth2 support for Google and GitHub authentication"
+```
+
+**What it does:**
+1. **Preparation**: Checks out main, pulls latest, runs compile/tests/smoketests
+2. **Branch**: Creates feature branch with descriptive name
+3. **Implementation**: Codes according to spec, follows project patterns
+4. **Testing**: Runs tests, adds new tests, directly verifies the specific change works
+5. **Commit**: Commits with clear message, pushes to remote
+6. **PR**: Creates DRAFT PR with summary, test plan, notes
+7. **CI**: Monitors checks, fixes failures, marks ready when green
+8. **Handoff**: Prompts operator for review approval
+
+#### `ticket` - GitHub Issue Implementation
+Implements a feature based on a GitHub issue.
+
+```bash
+# Work on GitHub issue #123
+/swe ticket 123
+
+# Works on any public or private repo (auto-detects from git remote)
+/swe ticket 456
+```
+
+**What it does:**
+- Auto-detects repository from `git remote`
+- Fetches issue title and body via `gh` CLI
+- Uses issue number in branch name: `feature/issue-123-short-description`
+- Follows same workflow as `impl`
+- Automatically includes "Closes #123" in PR body
+
+**When to use SWE:**
+- Complex features with multiple integration points
+- Architectural changes requiring decisions
+- Features with unclear requirements needing exploration
+- Security-sensitive implementations
+- Performance optimization requiring profiling
+- Changes affecting multiple systems
+
+---
+
+### `/jswe` - Junior Software Engineering Agent
+
+**Purpose**: Simple, straightforward implementations (fast and cost-effective)
+**Model**: Haiku 4.5 (faster, cheaper than Sonnet)
+**Autonomy**: Full - same workflow as swe but optimized for simplicity
+
+**Operations:**
+
+#### `impl` - Simple Implementation
+Implements straightforward features and bug fixes.
+
+```bash
+# Simple bug fix
+/jswe impl TASK="fix-null-check" SPEC="Add null check in getUserById to prevent NPE"
+
+# Small enhancement
+/jswe impl TASK="add-logging" SPEC="Add debug logging to payment processing endpoint"
+
+# Straightforward feature
+/jswe impl TASK="add-pagination" SPEC="Add pagination to /users endpoint (max 100 per page)"
+
+# Quick typo fix
+/jswe impl TASK="fix-error-message" SPEC="Fix typo in validation error message for email field"
+```
+
+**What it does:**
+- Same 8-step workflow as `/swe` but optimized for speed
+- Focuses on simplest working solution
+- Follows existing patterns closely
+- Escalates to `/swe` if complexity detected
+
+#### `ticket` - Simple GitHub Issue Implementation
+Implements a simple feature or bug fix from a GitHub issue.
+
+```bash
+# Work on simple GitHub issue #42
+/jswe ticket 42
+
+# Quick bug fix from issue
+/jswe ticket 99
+```
+
+**What it does:**
+- Same as `/swe ticket` but with Haiku model
+- Better for well-defined, straightforward issues
+- Faster execution and lower cost
+
+**When to use JSWE:**
+- Simple bug fixes with clear reproduction steps
+- Small enhancements to existing features
+- Straightforward features with clear specifications
+- Code style or formatting improvements
+- Documentation updates
+- Adding simple validation or error handling
+- Small refactoring with clear scope
+
+**When to escalate to SWE:**
+- Unclear or conflicting requirements
+- Need for architectural decisions
+- Multiple integration points or complex dependencies
+- Security-sensitive changes
+- Changes affecting multiple systems
+
+---
+
+## Command Reference (Other Agents)
 
 | Command | Description | Example Usage |
 |---------|-------------|---------------|
 | `/test-health` | Analyze test suite for flaky/slow tests | `/test-health` |
 | `/pe plan` | Run terraform plan with risk summary | `/pe plan DIR=./infra WORKSPACE=prod` |
 | `/pe apply` | Apply terraform changes (requires approval) | `/pe apply DIR=./infra WORKSPACE=staging` |
-| `/tl review` | Review and merge pull requests | `/tl review REPO=org/repo PR=123` |
-| `/tl triage` | Triage issues and map dependencies | `/tl triage REPO=org/repo` |
-| `/swe impl` | Implement complex features (Sonnet) | `/swe impl TASK="feature-x" SPEC="description"` |
-| `/jswe impl` | Implement simple tasks (Haiku - faster/cheaper) | `/jswe impl TASK="fix-bug" SPEC="add null check"` |
 | `/dbg` | Debug issues with scoped analysis | `/dbg "500 error on login endpoint"` |
 | `/arch plan` | Create architecture integration plan | `/arch plan FEATURE="real-time notifications"` |
+| `/doc` | Create or update documentation | `/doc FEATURE="user authentication flow"` |
+| `/orient` | Understand PRs/issues and suggest next steps | `/orient PR=123` or `/orient ISSUE=456` |
 
-See individual command files in `commands/` for detailed documentation and examples.
+See individual command files in `commands/` for detailed documentation.
 
 ## Hooks Overview
 
