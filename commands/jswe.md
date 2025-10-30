@@ -76,8 +76,23 @@ Follow the Agent Development Flow from CLAUDE.md (optimized for speed):
   - Follow existing test patterns
 - Fix any failing tests or simplify if needed
 - Run smoketests if applicable
+- **CRITICAL: Verify your specific change works by directly executing what you modified:**
+  - Fixed a script? Run that script with the inputs/conditions that caused the problem
+  - Changed a make/task target? Execute that specific target and verify its output
+  - Modified configuration? Start the app/service and verify the config is loaded correctly
+  - Fixed a function/method? Write a test or invoke it directly with relevant inputs
+  - Changed an API endpoint? Call the endpoint and verify the response
+  - Fixed a UI component? View/interact with that component and verify the behavior
+  - Modified a build step? Run the build and verify it completes successfully
+- **Exit criteria (must be met before Step 5):**
+  - ✅ Your specific change has been directly tested and works
+  - ✅ Observable evidence that the reported problem is fixed or new feature works
+  - ✅ All existing tests pass (no regressions)
+  - ✅ New tests added and passing
+- **If exit criteria not met**: DO NOT proceed to Step 5. Fix issues first.
 
 ### 5. Commit and Push
+**PREREQUISITE: All exit criteria from Step 4 must be met before proceeding**
 - Stage changes: `git add <files>`
 - Commit with clear message following repo conventions
 - Format: `<scope>: <imperative description>`
