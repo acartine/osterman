@@ -37,7 +37,7 @@ For each unit of work (feature request, bugfix) prompted by the Operator, exerci
 1. Run tests to prevent regression. 
 1. Add small, simple tests to verify results.  For terraform changes, execute the make targets for terraform plan and review them.  
 1. For non infra changes, smoketest the new logic - look for smoketest make/task targets if applicable.  run all tests.  if your tests are failing, fix them or simplify them. 
-1. If 5-7 go well, commit your changes to the branch and push to remote.
+1. Before committing, verify your specific change works by directly executing the component you modified (run the script you fixed, execute the make/task target you changed, start the app to test config changes, etc.). Do NOT just run a test suite unless it specifically exercises your change. You must produce observable evidence that your change works. Only after successful verification, commit your changes to the branch and push to remote.
 1. Use the gh tool to inspect branch builds and verify green workflows.  Inspect the logs if necessary, especially for infra changes.
 1. If successful, create a PR.
 1. Use the gh tool to monitor PR workfows and verify they are green.  Inspect the logs if necessary, especially for infra changes.
