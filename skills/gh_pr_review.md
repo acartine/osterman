@@ -4,17 +4,17 @@ description: Fetch PR diff, perform structured review, and post findings as PR c
 inputs: { repo: required, pr_number: required, post_comment: optional (default true) }
 outputs: { review_summary: markdown, findings: list, review_status: string }
 dependencies: [ gh CLI ]
-safety: Read-only by default; comments/approvals require approval or agent autonomy.
+safety: Read-only by default; review comments require approval or agent autonomy. Note: Uses comment-only reviews, no formal GitHub approvals.
 steps:
   - Fetch diff + metadata (files, labels, checks, size, authors).
   - Run quality checklist: correctness, security, performance, tests, docs.
   - Summarize architectural impacts and risk level.
   - Draft review with Critical/Important/Suggestions.
   - Post review comment to PR using gh pr review.
-  - Return review status: approved, changes_requested, or comment.
+  - Return review status: ready_to_merge, changes_requested, or comment.
 tooling:
   - commands: bin/gh-pr-review
-  - gh pr view --json; gh pr diff; gh pr review --comment/--approve/--request-changes
+  - gh pr view --json; gh pr diff; gh pr review --comment/--request-changes (never uses --approve)
 ---
 
 # PR Review Skill
@@ -57,11 +57,11 @@ Review these dimensions:
 - **High Risk**: >500 lines, missing tests, red CI, breaking changes
 
 ### 5. Post Review to PR
-Based on risk and findings, use appropriate review action:
+Based on risk and findings, use appropriate review action (NOTE: Never uses formal GitHub approvals):
 
-**Approve** (Low/Medium risk, no Critical/Important findings):
+**Ready to Merge** (Low/Medium risk, no Critical/Important findings):
 ```bash
-gh pr review <num> --repo <org/name> --approve --body "<review_summary>"
+gh pr review <num> --repo <org/name> --comment --body "✅ **Review Decision: Ready to merge**\n\n<review_summary>"
 ```
 
 **Request Changes** (Critical findings or High risk):
@@ -103,5 +103,5 @@ gh pr review <num> --repo <org/name> --comment --body "<review_summary>"
 ## Return Values
 - `review_summary`: Full markdown review text
 - `findings`: List of categorized findings
-- `review_status`: "approved" | "changes_requested" | "comment"
+- `review_status`: "ready_to_merge" | "changes_requested" | "comment"
 - `head_ref_oid`: Current HEAD SHA (for change detection)
