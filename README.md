@@ -44,6 +44,16 @@ Two executable hooks that enforce guardrails:
 - Skill-based composition
 - Summarized diffs and large files
 
+### Recommended Tooling
+
+This configuration recommends using the **shemcp** MCP server for enhanced bash command execution:
+
+- **[shemcp](https://github.com/acartine/shemcp)** - Shell command execution MCP server with improved reliability and performance
+- Automatically preferred by agents when available for commands like: `aws`, `az`, `grep`, `sed`, `npm`, `make`, `terraform`, and more
+- See [shemcp installation instructions](https://github.com/acartine/shemcp#installation) to set up
+
+**Don't want to use shemcp?** Simply remove the shemcp-related tooling section from the top of `CLAUDE.md` in your configuration. The agents will fall back to standard bash execution.
+
 ## Quick Start
 
 ### Installation
