@@ -13,8 +13,9 @@ Before he was Dr. Manhattan, he was Jon Osterman.  We hope someday to be Dr. Man
 
 ### Slash Commands
 
-Seven specialized commands for common development workflows:
+Eight specialized commands for common development workflows:
 
+- **`/ship`** - Ship changes quickly: commit, push, create PR, and auto-merge
 - **`/test-health`** - Generate test health reports with flaky and slow test analysis
 - **`/pe`** - Production Engineering workflows with safety guardrails for infrastructure changes
 - **`/tl`** - Team Lead workflows for PR review, issue triage, and merge management
@@ -79,6 +80,10 @@ make test
 ### Try a Command
 
 ```bash
+# Ship: Quick commit, push, PR, and merge (the fastest path!)
+claude /ship
+claude /ship DESC="feat: add user profile export"
+
 # Team Lead: Review and merge a PR
 claude /tl review_and_merge 123
 
@@ -330,6 +335,49 @@ Implements a simple feature or bug fix from a GitHub issue.
 
 ---
 
+### `/ship` - Ship Command
+
+**Purpose**: Fast path to get changes merged - commit, push, PR, and auto-merge in one command
+**Model**: Sonnet 4.5
+**Autonomy**: Full - handles branch creation through merge
+
+**Operations:**
+
+#### Quick Ship
+Ship local changes with auto-generated or custom commit message.
+
+```bash
+# Ship with auto-generated commit message
+/ship
+
+# Ship with custom commit description
+/ship DESC="feat: add user profile export"
+
+# Ship bug fix
+/ship DESC="fix: prevent null pointer in payment flow"
+```
+
+**What it does:**
+1. **Branch Check**: If on main, creates new branch; otherwise uses current branch
+2. **Commit**: Stages all changes and commits with provided or auto-generated message
+3. **Push**: Pushes to remote with upstream tracking
+4. **PR**: Creates pull request (or uses existing if already created)
+5. **Review & Merge**: Automatically reviews and merges if ready and CI passes
+
+**When to use:**
+- You have local changes ready to ship
+- Changes are straightforward and well-tested
+- You want the fastest path from local edits to merged PR
+- You're confident in the changes and want automated review/merge
+
+**Safety:**
+- Never force pushes
+- Verifies CI passes before merging
+- Creates PR for review transparency
+- Follows same review criteria as `/tl review_and_merge`
+
+---
+
 ## Command Reference (Other Agents)
 
 | Command | Description | Example Usage |
@@ -432,6 +480,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 │   ├── jswe.md
 │   ├── orient.md
 │   ├── pe.md
+│   ├── ship.md
 │   ├── swe.md
 │   ├── test-health.md
 │   └── tl.md
@@ -445,7 +494,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 
 ### Models Used
 
-- **Sonnet 4.5**: `sonnet` (default for most commands: /swe, /dbg, /arch, /tl, /doc, /orient)
+- **Sonnet 4.5**: `sonnet` (default for most commands: /ship, /swe, /dbg, /arch, /tl, /doc, /orient)
 - **Haiku 4.5**: `haiku` (for lightweight operations: /jswe)
 
 Commands specify their model in frontmatter; defaults to Sonnet if not specified. Use `/jswe` instead of `/swe` for simple tasks to save cost and time.
