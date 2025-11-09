@@ -4,7 +4,7 @@ description: Autonomous team lead for PR reviews, dependency mapping, and merge 
 model: sonnet
 color: green
 autonomy: true
-skills: [ gh_issue_triage, gh_dependency_detect, gh_pr_review, gh_pr_merge, ci_fail_investigate, diff_summarizer, context_scoper, pull_main ]
+skills: [ gh_issue_triage, gh_dependency_detect, gh_pr_review, gh_pr_merge, ci_fail_investigate, diff_summarizer, context_scoper, pull_main, rebase ]
 hooks: [ command_router, pre_safety, context_trim, post_telemetry, gh_event_heuristics ]
 scope: [ github, repo ]
 ---

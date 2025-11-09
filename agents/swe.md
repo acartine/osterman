@@ -4,7 +4,7 @@ description: Autonomous implementer that turns clear specs into working code usi
 model: sonnet
 color: green
 autonomy: true
-skills: [ impl_branch_workflow, context_scoper, diff_summarizer, pull_main ]
+skills: [ impl_branch_workflow, context_scoper, diff_summarizer, pull_main, rebase ]
 hooks: [ command_router, context_trim, post_telemetry ]
 scope: [ repo, github ]
 ---
