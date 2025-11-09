@@ -13,12 +13,18 @@ This document describes the original design goals and the actual implementation 
 ### Completed Components
 
 **Commands (Slash Commands):**
+- `/ship` - Ship changes quickly (commit, push, PR, auto-merge)
 - `/test-health` - Test health reporting with flaky/slow test analysis
 - `/pe` - Production Engineering workflows (plan/apply with safety guardrails)
 - `/tl` - Team Lead workflows (PR review, issue triage, merge management)
 - `/swe` - Software Engineering implementation (branch workflow, DRAFT PRs)
+- `/jswe` - Junior SWE for simple tasks (faster, cheaper with Haiku)
 - `/dbg` - Code Debugger (scoped analysis, fix proposals)
 - `/arch` - Software Architect (integration planning)
+- `/doc` - Documentation creation and updates
+- `/orient` - Understand PRs/issues and suggest next steps
+- `/pull_main` - Checkout main branch and pull latest changes
+- `/rebase` - Rebase current branch on latest main with conflict resolution
 
 **Hooks (Safety & Telemetry):**
 - `pre_safety_check.sh` - PreToolUse hook that blocks dangerous infrastructure operations

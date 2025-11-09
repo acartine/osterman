@@ -389,6 +389,8 @@ Ship local changes with auto-generated or custom commit message.
 | `/arch plan` | Create architecture integration plan | `/arch plan FEATURE="real-time notifications"` |
 | `/doc` | Create or update documentation | `/doc FEATURE="user authentication flow"` |
 | `/orient` | Understand PRs/issues and suggest next steps | `/orient PR=123` or `/orient ISSUE=456` |
+| `/pull_main` | Checkout main branch and pull latest changes | `/pull_main` |
+| `/rebase` | Rebase current branch on latest main with conflict resolution | `/rebase` |
 
 See individual command files in `commands/` for detailed documentation.
 
@@ -480,6 +482,8 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 │   ├── jswe.md
 │   ├── orient.md
 │   ├── pe.md
+│   ├── pull_main.md
+│   ├── rebase.md
 │   ├── ship.md
 │   ├── swe.md
 │   ├── test-health.md
