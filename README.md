@@ -13,12 +13,13 @@ Before he was Dr. Manhattan, he was Jon Osterman.  We hope someday to be Dr. Man
 
 ### Slash Commands
 
-Eight specialized commands for common development workflows:
+Nine specialized commands for common development workflows:
 
 - **`/ship`** - Ship changes quickly: commit, push, create PR, and auto-merge
 - **`/test-health`** - Generate test health reports with flaky and slow test analysis
 - **`/pe`** - Production Engineering workflows with safety guardrails for infrastructure changes
 - **`/tl`** - Team Lead workflows for PR review, issue triage, and merge management
+- **`/sswe`** - Staff Software Engineering for complex implementations (Opus-powered, highest capability)
 - **`/swe`** - Software Engineering implementation with branch workflow and DRAFT PRs (Sonnet-powered)
 - **`/jswe`** - Junior Software Engineering for simple tasks (Haiku-powered, faster and cheaper)
 - **`/dbg`** - Code debugging with scoped analysis and fix proposals
@@ -90,7 +91,11 @@ claude /tl review_and_merge 123
 # Team Lead: Create a bug report
 claude /tl ticket TYPE='bug' DESC='Login fails with OAuth providers'
 
-# Software Engineer: Implement from GitHub issue (Sonnet - for complex tasks)
+# Staff SWE: Complex implementation (Opus - highest capability)
+claude /sswe ticket 789
+claude /sswe impl TASK="microservices-migration" SPEC="Split monolith into auth and data services"
+
+# Software Engineer: Implement from GitHub issue (Sonnet - for standard tasks)
 claude /swe ticket 456
 
 # Software Engineer: Implement with inline spec
@@ -207,9 +212,68 @@ Creates a new GitHub issue with proper formatting.
 
 ---
 
+### `/sswe` - Staff Software Engineering Agent
+
+**Purpose**: Complex, high-impact feature implementation requiring highest capability
+**Model**: Opus 4.1 (highest capability model)
+**Autonomy**: Full - implements, tests, creates PRs with deep analysis
+
+**Operations:**
+
+#### `impl` - Complex Feature Implementation
+Implements complex features requiring architectural decisions and deep analysis.
+
+```bash
+# Complex architectural change
+/sswe impl TASK="distributed-cache-layer" SPEC=https://github.com/acme/specs/issues/142
+
+# Microservices migration
+/sswe impl TASK="microservices-split" SPEC="Split monolithic auth service into user, session, and permission microservices"
+
+# Complex integration with external system
+/sswe impl TASK="salesforce-sync" SPEC="Implement bi-directional sync with Salesforce including conflict resolution"
+
+# Performance optimization requiring analysis
+/sswe impl TASK="optimize-search-queries" SPEC="Profile and optimize product search queries, implement caching layer"
+
+# Security-sensitive implementation
+/sswe impl TASK="implement-encryption-at-rest" SPEC="Add encryption at rest for all PII data using AWS KMS"
+```
+
+**What it does:**
+- Same 8-step workflow as `/swe` but with Opus model for maximum capability
+- Deep architectural analysis and design consideration
+- Comprehensive edge case and error scenario analysis
+- Thorough security and performance implications review
+- Creates highly maintainable, extensible solutions
+
+#### `ticket` - Complex GitHub Issue Implementation
+Implements complex features based on GitHub issues requiring highest capability.
+
+```bash
+# Work on complex GitHub issue #789
+/sswe ticket 789
+
+# Complex architectural issue
+/sswe ticket 256
+```
+
+**When to use SSWE:**
+- Complex features with multiple integration points
+- Architectural changes or refactoring
+- Unclear requirements needing deep analysis
+- Security-sensitive implementations
+- Performance optimization requiring profiling
+- Changes affecting multiple systems or services
+- High business impact or risk features
+- Complex state management or data flows
+- Features that will set patterns for future development
+
+---
+
 ### `/swe` - Software Engineering Agent
 
-**Purpose**: Complex feature implementation with full workflow
+**Purpose**: Standard feature implementation with full workflow
 **Model**: Sonnet 4.5
 **Autonomy**: Full - implements, tests, creates PRs
 
@@ -261,12 +325,12 @@ Implements a feature based on a GitHub issue.
 - Automatically includes "Closes #123" in PR body
 
 **When to use SWE:**
-- Complex features with multiple integration points
-- Architectural changes requiring decisions
-- Features with unclear requirements needing exploration
-- Security-sensitive implementations
-- Performance optimization requiring profiling
-- Changes affecting multiple systems
+- Standard features with moderate complexity
+- Typical development tasks
+- Features with clear specifications but needing careful implementation
+- Moderate refactoring or enhancement work
+- Features requiring standard integration patterns
+- When requirements are mostly clear but implementation needs thought
 
 ---
 
@@ -326,12 +390,19 @@ Implements a simple feature or bug fix from a GitHub issue.
 - Adding simple validation or error handling
 - Small refactoring with clear scope
 
-**When to escalate to SWE:**
-- Unclear or conflicting requirements
-- Need for architectural decisions
-- Multiple integration points or complex dependencies
-- Security-sensitive changes
-- Changes affecting multiple systems
+**When to escalate to SWE or SSWE:**
+- Escalate to SWE for:
+  - Moderate complexity beyond simple fixes
+  - Need for design decisions
+  - Multiple file changes with dependencies
+  - Features requiring careful planning
+- Escalate to SSWE for:
+  - Unclear or conflicting requirements
+  - Major architectural decisions
+  - Complex integration points or dependencies
+  - Security-sensitive changes
+  - Changes affecting multiple systems
+  - High business impact features
 
 ---
 
@@ -485,6 +556,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 │   ├── pull_main.md
 │   ├── rebase.md
 │   ├── ship.md
+│   ├── sswe.md
 │   ├── swe.md
 │   ├── test-health.md
 │   └── tl.md
@@ -498,10 +570,14 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 
 ### Models Used
 
+- **Opus 4.1**: `opus` (for highest capability: /sswe)
 - **Sonnet 4.5**: `sonnet` (default for most commands: /ship, /swe, /dbg, /arch, /tl, /doc, /orient)
 - **Haiku 4.5**: `haiku` (for lightweight operations: /jswe)
 
-Commands specify their model in frontmatter; defaults to Sonnet if not specified. Use `/jswe` instead of `/swe` for simple tasks to save cost and time.
+Commands specify their model in frontmatter; defaults to Sonnet if not specified. Choose the right agent for your task complexity:
+- Use `/jswe` for simple tasks (fastest, cheapest)
+- Use `/swe` for standard development tasks (balanced)
+- Use `/sswe` for complex, high-impact features (highest capability)
 
 ## Customization
 
