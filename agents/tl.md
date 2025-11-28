@@ -1,7 +1,7 @@
 ---
 name: tl
 description: Autonomous team lead for PR reviews, dependency mapping, and merge readiness, with structured severity-tagged feedback.
-model: sonnet
+model: opus
 color: green
 autonomy: true
 skills: [ gh_issue_triage, gh_dependency_detect, gh_pr_review, gh_pr_merge, ci_fail_investigate, diff_summarizer, context_scoper, pull_main, rebase ]
