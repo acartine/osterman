@@ -2,7 +2,7 @@
 description: Ship changes by committing, pushing, creating PR, and auto-merging
 argument-hint: [DESC="<commit-description>"]
 allowed-tools: Bash(git:*), Bash(gh:*), Task
-model: sonnet
+model: opus
 ---
 
 # Ship Command
