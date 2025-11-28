@@ -1,7 +1,7 @@
 ---
 description: Rebase current branch on latest main with conflict resolution
 allowed-tools: Bash(git:*)
-model: sonnet
+model: opus
 ---
 
 # Rebase Command

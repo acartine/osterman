@@ -2,7 +2,7 @@
 description: Software Engineering agent for feature implementation with specs
 argument-hint: impl TASK="<description>" [SPEC=<url-or-notes>] | ticket <issue-number>
 allowed-tools: Bash(git:*), Bash(make:*), Bash(npm:*), Bash(pytest:*), Bash(gh:*), Read, Grep, Glob, Write, Edit
-model: sonnet
+model: opus
 ---
 
 # Software Engineering Implementation Agent

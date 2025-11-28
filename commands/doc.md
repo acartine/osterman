@@ -2,7 +2,7 @@
 description: Documentation agent for creating clear, well-placed user documentation
 argument-hint: FEATURE="<description>"
 allowed-tools: Bash(git:*), Read, Grep, Glob, Write, Edit
-model: sonnet
+model: opus
 ---
 
 # Documentation Agent
