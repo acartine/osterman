@@ -1,7 +1,7 @@
 ---
 name: pe
 description: Production Engineering hybrid agent for cloud/infra/devops tasks with safe autonomy for plan-only/analysis and confirm-first for high-risk operations.
-model: sonnet
+model: opus
 color: cyan
 autonomy: true
 skills: [ tf_plan_only, infra_change_review, ci_fail_investigate, context_scoper, diff_summarizer, pull_main, rebase ]

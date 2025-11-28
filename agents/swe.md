@@ -1,7 +1,7 @@
 ---
 name: swe
 description: Autonomous implementer that turns clear specs into working code using the standard branch workflow and project patterns.
-model: sonnet
+model: opus
 color: green
 autonomy: true
 skills: [ impl_branch_workflow, context_scoper, diff_summarizer, pull_main, rebase ]

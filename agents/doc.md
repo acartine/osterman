@@ -1,7 +1,7 @@
 ---
 name: doc
 description: Documentation agent for creating clear, well-placed user documentation following project patterns.
-model: sonnet
+model: opus
 color: green
 autonomy: false
 skills: [ documentation, pull_main ]

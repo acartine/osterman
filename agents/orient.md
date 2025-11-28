@@ -1,7 +1,7 @@
 ---
 name: orient
 description: Orientation agent for understanding PRs/issues and suggesting concrete next steps for developers.
-model: sonnet
+model: opus
 color: blue
 autonomy: false
 skills: [ orientation, pull_main ]
