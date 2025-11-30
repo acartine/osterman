@@ -2,15 +2,20 @@
 set -euo pipefail
 
 TASK=${TASK:-feature}
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
 
-echo "# Implementation Workflow"
+echo "# Worktree Implementation Workflow"
+echo "# Ensure main is up-to-date"
 echo "git checkout main && git pull"
 echo "# Verify builds/tests via project targets"
 echo "make build || task build || true"
 echo "make test || task test || true"
 echo
 BRANCH="feat/${TASK}"
-echo "git checkout -b ${BRANCH}"
+WORKTREE_DIR="../${REPO_NAME}-${TASK}"
+echo "# Create worktree for parallel development"
+echo "git worktree add ${WORKTREE_DIR} -b ${BRANCH}"
+echo "cd ${WORKTREE_DIR}"
 echo "# Implement changes..."
 echo "# Run tests/smoke tests"
 echo "make test || task test || true"
@@ -18,4 +23,7 @@ echo "git add -A && git commit -m 'feat: ${TASK}'"
 echo "git push -u origin ${BRANCH}"
 echo "gh pr create --fill --title '${TASK}' --draft"
 echo "# Iterate until green, then mark ready"
+echo
+echo "# After merge, clean up worktree:"
+echo "cd .. && git worktree remove ${WORKTREE_DIR}"
 

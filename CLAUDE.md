@@ -26,22 +26,22 @@ wherever possible use the shemcp:shell_exec() (the mcp tool, if installed) for b
 
 ## Agent Development Flow
 For each unit of work (feature request, bugfix) prompted by the Operator, exercise this general flow of work to complete the task:
-1. Check out main.
-1. Pull from main.
+1. Ensure main is checked out and up-to-date (pull from origin).
 1. Run compile tasks and verify main is compiling.
-1. Run all unit tests and verify main is stable
-1. Run smoketests or apps to verify main is working.  When running smoketests, use a timeout of 3 minutes.  When running apps, launch them in the background for 30 seconds and verify no errors/exceptions.
+1. Run all unit tests and verify main is stable.
+1. Run smoketests or apps to verify main is working. When running smoketests, use a timeout of 3 minutes. When running apps, launch them in the background for 30 seconds and verify no errors/exceptions.
 1. Kill any processes you launched.
-1. Create a branch for your feature/bugfix.
-1. Make edits as requested.
-1. Run tests to prevent regression. 
-1. Add small, simple tests to verify results.  For terraform changes, execute the make targets for terraform plan and review them.  
-1. For non infra changes, smoketest the new logic - look for smoketest make/task targets if applicable.  run all tests.  if your tests are failing, fix them or simplify them. 
-1. Before committing, verify your specific change works by directly executing the component you modified (run the script you fixed, execute the make/task target you changed, start the app to test config changes, etc.). Do NOT just run a test suite unless it specifically exercises your change. You must produce observable evidence that your change works. Only after successful verification, commit your changes to the branch and push to remote.
-1. Use the gh tool to inspect branch builds and verify green workflows.  Inspect the logs if necessary, especially for infra changes.
+1. Create a worktree for your feature/bugfix branch (e.g., `git worktree add ../repo-feature-x -b feature-x`). This enables parallel development across multiple agents without branch switching conflicts.
+1. Change to the worktree directory and make edits as requested.
+1. Run tests to prevent regression.
+1. Add small, simple tests to verify results. For terraform changes, execute the make targets for terraform plan and review them.
+1. For non infra changes, smoketest the new logic - look for smoketest make/task targets if applicable. Run all tests. If your tests are failing, fix them or simplify them.
+1. Before committing, verify your specific change works by directly executing the component you modified (run the script you fixed, execute the make/task target you changed, start the app to test config changes, etc.). Do NOT just run a test suite unless it specifically exercises your change. You must produce observable evidence that your change works. Only after successful verification, commit your changes and push to remote.
+1. Use the gh tool to inspect branch builds and verify green workflows. Inspect the logs if necessary, especially for infra changes.
 1. If successful, create a PR.
-1. Use the gh tool to monitor PR workfows and verify they are green.  Inspect the logs if necessary, especially for infra changes.
+1. Use the gh tool to monitor PR workflows and verify they are green. Inspect the logs if necessary, especially for infra changes.
 1. Prompt the operator that you are ready to merge. Wait until the operator agrees that the PR should be merged.
+1. After merge, clean up the worktree: `git worktree remove ../repo-feature-x`.
 
 ## Commit & Pull Request Guidelines
 - Commits: Use clear, imperative titles (≤72 chars). Scope when helpful (e.g., "frontend: fix login redirect").

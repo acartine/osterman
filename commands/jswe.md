@@ -212,6 +212,6 @@ Escalate to `/swe` if you encounter:
 - Changes affecting multiple systems or services
 
 ## Reference Documentation
-- **Skills**: `skills/impl_branch_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking
+- **Skills**: `skills/impl_worktree_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking
 - **Agent**: `agents/jswe.md` for implementation patterns
 - **CLAUDE.md**: Agent Development Flow section
