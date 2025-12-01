@@ -197,6 +197,6 @@ Follow the Agent Development Flow from CLAUDE.md:
 ```
 
 ## Reference Documentation
-- **Skills**: `skills/impl_branch_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking, `skills/iac.md` for infrastructure as code with Terraform
+- **Skills**: `skills/impl_worktree_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking, `skills/iac.md` for infrastructure as code with Terraform
 - **Agent**: `agents/swe.md` for full implementation patterns
 - **CLAUDE.md**: Agent Development Flow section
