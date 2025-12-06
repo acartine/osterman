@@ -51,7 +51,7 @@ For each unit of work (feature request, bugfix) prompted by the Operator, exerci
 - Never commit secrets.
 
 ## Project Specific Guidelines
-- Read ./PROJECTS.md and treat those guidelines as an appendix to these.
+- Read ./PROJECT.md and treat those guidelines as an appendix to these.
 
 ## Autonomy Policy
 - Default: Domain agents operate autonomously for routine work in their scope.
