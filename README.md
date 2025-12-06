@@ -19,9 +19,9 @@ Nine specialized commands for common development workflows:
 - **`/test-health`** - Generate test health reports with flaky and slow test analysis
 - **`/pe`** - Production Engineering workflows with safety guardrails for infrastructure changes
 - **`/tl`** - Team Lead workflows for PR review, issue triage, and merge management
-- **`/sswe`** - Staff Software Engineering for complex implementations (Opus-powered, highest capability)
-- **`/swe`** - Software Engineering implementation with branch workflow and DRAFT PRs (Sonnet-powered)
-- **`/jswe`** - Junior Software Engineering for simple tasks (Haiku-powered, faster and cheaper)
+- **`/sswe`** - Staff Software Engineering for complex implementations *(obsolete - now uses Opus like /swe)*
+- **`/swe`** - Software Engineering implementation with branch workflow and DRAFT PRs (Opus-powered)
+- **`/jswe`** - Junior Software Engineering for simple tasks *(obsolete - now uses Opus like /swe)*
 - **`/dbg`** - Code debugging with scoped analysis and fix proposals
 - **`/arch`** - Architecture planning and integration design
 
@@ -570,14 +570,12 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 
 ### Models Used
 
-- **Opus 4.1**: `opus` (for highest capability: /sswe)
-- **Sonnet 4.5**: `sonnet` (default for most commands: /ship, /swe, /dbg, /arch, /tl, /doc, /orient)
-- **Haiku 4.5**: `haiku` (for lightweight operations: /jswe)
+- **Opus 4.5**: `opus` (all SWE agents: /swe, /sswe, /jswe)
+- **Sonnet 4.5**: `sonnet` (other commands: /ship, /dbg, /arch, /tl, /doc, /orient)
 
-Commands specify their model in frontmatter; defaults to Sonnet if not specified. Choose the right agent for your task complexity:
-- Use `/jswe` for simple tasks (fastest, cheapest)
-- Use `/swe` for standard development tasks (balanced)
-- Use `/sswe` for complex, high-impact features (highest capability)
+Commands specify their model in frontmatter; defaults to Sonnet if not specified.
+
+> **Note**: The `/jswe` and `/sswe` agents are currently obsolete since all SWE agents now use the Opus model. They are being retained in case model costs diverge in the future and we want to assign them to different models for cost optimization.
 
 ## Customization
 
