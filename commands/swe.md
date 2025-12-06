@@ -44,7 +44,7 @@ Follow the Agent Development Flow from CLAUDE.md:
 ### 1. Preparation Phase
 - Check out main branch
 - Pull latest from remote: `git pull origin main`
-- Read PROJECTS.md and look for a section called 'Stability Checks'. If found, follow those directions.
+- Read PROJECT.md and look for a section called 'Stability Checks'. If found, follow those directions.
 - If not found, look for make/task/just targets with the word "sanity" and run the first one you find. If there are multiple build tools, run the first one you find for each build tool.
 
 ### 2. Branch Creation
