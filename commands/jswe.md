@@ -48,8 +48,10 @@ Follow the Agent Development Flow from CLAUDE.md (optimized for speed):
 ### 1. Preparation Phase
 - Check out main branch
 - Pull latest from remote: `git pull origin main`
-- Read PROJECT.md and look for a section called 'Stability Checks'. If found, follow those directions.
-- If not found, look for make/task/just targets with the word "sanity" and run the first one you find. If there are multiple build tools, run the first one you find for each build tool.
+- **Run stability checks (preparation phase)**: Follow the `stability_checks` skill with phase="preparation"
+  - Read PROJECT.md and look for a section called 'Stability Checks'. If found, follow those directions for the preparation phase.
+  - If not found, look for make/task/just targets with the word "sanity" and run the first one you find. If there are multiple build tools, run the first one you find for each build tool.
+  - **Exit criteria**: All stability checks must pass before proceeding to branch creation.
 
 ### 2. Branch Creation
 - Create feature branch: `git checkout -b feature/<task-name>`
@@ -94,6 +96,10 @@ Follow the Agent Development Flow from CLAUDE.md (optimized for speed):
 - Commit with clear message following repo conventions
 - Format: `<scope>: <imperative description>`
 - Example: `feat: add user authentication to API`
+- **Run stability checks (pre-push phase)**: Follow the `stability_checks` skill with phase="pre-push"
+  - Read PROJECT.md and look for a section called 'Stability Checks'. If found, follow those directions for the pre-push phase.
+  - If not found, run the same sanity targets as in preparation phase.
+  - **Exit criteria**: All stability checks must pass before pushing.
 - Push to remote: `git push -u origin <branch-name>`
 
 ### 6. PR Creation
@@ -209,6 +215,6 @@ Escalate to `/swe` if you encounter:
 - Changes affecting multiple systems or services
 
 ## Reference Documentation
-- **Skills**: `skills/impl_worktree_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking
+- **Skills**: `skills/impl_worktree_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking, `skills/stability_checks.md` for stability verification
 - **Agent**: `agents/jswe.md` for implementation patterns
 - **CLAUDE.md**: Agent Development Flow section
