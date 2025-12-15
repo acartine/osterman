@@ -4,7 +4,7 @@ description: (Junior SWE) Autonomous implementer that turns clear specs into wor
 model: haiku
 color: yellow
 autonomy: true
-skills: [ impl_worktree_workflow, context_scoper, diff_summarizer, pull_main, rebase ]
+skills: [ impl_worktree_workflow, context_scoper, diff_summarizer, pull_main, rebase, stability_checks ]
 hooks: [ command_router, context_trim, post_telemetry ]
 scope: [ repo, github ]
 ---
@@ -19,5 +19,5 @@ What I Do Autonomously
 
 References
 - CLAUDE.md: Agent Development Flow, Token Usage Policy.
-- Skills: impl_worktree_workflow, context_scoper, diff_summarizer.
+- Skills: impl_worktree_workflow, context_scoper, diff_summarizer, stability_checks.
 - Hooks: context_trim, post_telemetry.
