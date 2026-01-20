@@ -36,13 +36,9 @@ First, determine which workflow to follow:
 **For `ticket` workflow:**
 - Extract issue number from arguments
 - Auto-detect repository from git remote: `git remote get-url origin`
-- Parse org/repo from URL
-- Fetch issue details: `gh issue view <issue-number> --repo <org/repo> --json title,body,number`
-- Use issue title and body as the specification:
-  - TASK: Derive from issue title (convert to kebab-case for branch name)
-  - SPEC: Issue body content
-- Create branch named: `feature/issue-<number>-<short-description>`
-- Proceed to Preparation Phase with derived TASK and SPEC
+- Execute the `ship_with_review` skill with `issue=<number>` and `repo=<org/repo>`
+- Follow the workflow defined in `skills/ship_with_review.md`
+- **Stop here** - the skill handles the entire workflow including review loop and merge
 
 Follow the Agent Development Flow from CLAUDE.md:
 

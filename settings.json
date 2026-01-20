@@ -100,7 +100,8 @@
       "SlashCommand(/pe:*)",
       "SlashCommand(/test-health:*)",
       "SlashCommand(/orient:*)",
-      "SlashCommand(/doc:*)"
+      "SlashCommand(/doc:*)",
+      "SlashCommand(/ship_with_review:*)"
     ],
     "ask": [
     ]
