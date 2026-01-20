@@ -9,6 +9,7 @@
 .CLAUDE.md.swp
 
 # Claude local artifacts
+cache/
 debug/
 file-history/
 ide/
@@ -17,14 +18,19 @@ projects/
 plugins/
 settings.local.json
 history.jsonl
+paste-cache/
+plans/
 shell-snapshots/
+stats-cache.json
 statsig/
+telemetry/
 todos/
 osterman/
 .claude/
 telemetry.jsonl
 *.backup
 *.backup-*
+
 
 # Node/JS (if used in bin tooling)
 node_modules/
