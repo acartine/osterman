@@ -1,39 +1,9 @@
 {
-  "comment": "Settings for Iteration 4 - With safety hook and telemetry",
-
-  "hooks": {
-    "PreToolUse": [
-      {
-        "comment": "Block dangerous infrastructure operations",
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/pre_safety_check.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "comment": "Log all tool usage for audit and analysis",
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/post_telemetry.sh",
-            "timeout": 5000
-          }
-        ]
-      }
-    ]
-  },
-
   "env": {
     "CLAUDE_TELEMETRY": "1"
   },
-
   "permissions": {
+    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(awk:*)",
       "Bash(aws:*)",
@@ -92,6 +62,9 @@
       "Fetch",
       "Grep",
       "Glob",
+      "Edit",
+      "Write",
+      "Skill(ship_with_review:*)",
       "SlashCommand(/jswe:*)",
       "SlashCommand(/swe:*)",
       "SlashCommand(/dbg:*)",
@@ -101,9 +74,42 @@
       "SlashCommand(/test-health:*)",
       "SlashCommand(/orient:*)",
       "SlashCommand(/doc:*)",
-      "SlashCommand(/ship_with_review:*)"
+      "SlashCommand(/ship_with_review:*)",
+      "mcp__chrome-devtools__*",
+      "mcp__shemcp__*",
+      "Task(*)"
     ],
-    "ask": [
+    "ask": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre_safety_check.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/post_telemetry.sh",
+            "timeout": 5000
+          }
+        ]
+      }
     ]
-  }
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-code-plugins": true,
+    "gopls-lsp@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true,
+  "comment": "Settings for Iteration 4 - With safety hook and telemetry"
 }
