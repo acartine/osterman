@@ -25,23 +25,15 @@ wherever possible use the shemcp:shell_exec() (the mcp tool, if installed) for b
 - if no target exists, consider creating a new target.  this enables discovery and reuse for other users.
 
 ## Agent Development Flow
-For each unit of work (feature request, bugfix) prompted by the Operator, exercise this general flow of work to complete the task:
-1. Ensure main is checked out and up-to-date (pull from origin).
-1. Run compile tasks and verify main is compiling.
-1. Run all unit tests and verify main is stable.
-1. Run smoketests or apps to verify main is working. When running smoketests, use a timeout of 3 minutes. When running apps, launch them in the background for 30 seconds and verify no errors/exceptions.
-1. Kill any processes you launched.
-1. Create a worktree for your feature/bugfix branch (e.g., `git worktree add ../repo-feature-x -b feature-x`). This enables parallel development across multiple agents without branch switching conflicts.
-1. Change to the worktree directory and make edits as requested.
-1. Run tests to prevent regression.
+**NOTE: If you cannot find a command, make sure you look in the User level settings before you decide the command is not there.**
+
+**NOTE: For each unit of work (feature request, bugfix, etc.), you should almost always default to the ship_with_review skill.  If no Github issue exists for you work, simply omit steps that ask you to do stuff with the Github Issue.  The only exception is if the Operator explicitly tells you to do something different.**
+
+For each unit of work (feature request, bugfix) prompted by the Operator, exercise the general flow of work as closely to the ship_with_review skill as possible.  Some extra suggestions include: 
 1. Add small, simple tests to verify results. For terraform changes, execute the make targets for terraform plan and review them.
-1. For non infra changes, smoketest the new logic - look for smoketest make/task targets if applicable. Run all tests. If your tests are failing, fix them or simplify them.
+1. For non infra changes, look in ./PROJECT.md for sanity/stability commands to run when you think your changes satisfy the requirements and the tests have been augmented to support your changes.  If your tests are failing, fix the code or test (whichever is wrong in light of the requirements).  If the test is wrong and super complicated, simplify it and clarify caveats in the test code and the PR.
 1. Before committing, verify your specific change works by directly executing the component you modified (run the script you fixed, execute the make/task target you changed, start the app to test config changes, etc.). Do NOT just run a test suite unless it specifically exercises your change. You must produce observable evidence that your change works. Only after successful verification, commit your changes and push to remote.
 1. Use the gh tool to inspect branch builds and verify green workflows. Inspect the logs if necessary, especially for infra changes.
-1. If successful, create a PR.
-1. Use the gh tool to monitor PR workflows and verify they are green. Inspect the logs if necessary, especially for infra changes.
-1. Prompt the operator that you are ready to merge. Wait until the operator agrees that the PR should be merged.
-1. After merge, clean up the worktree: `git worktree remove ../repo-feature-x`.
 
 ## Commit & Pull Request Guidelines
 - Commits: Use clear, imperative titles (≤72 chars). Scope when helpful (e.g., "frontend: fix login redirect").
@@ -81,14 +73,3 @@ For each unit of work (feature request, bugfix) prompted by the Operator, exerci
 - Use progressive disclosure: start with summaries and expand on demand.
 - Reuse existing build/test targets; avoid verbose command listings.
 
-## Command Shortcuts
-- Messages starting with `/` are treated as project-local shortcuts (handled by the `command_router` hook) that expand into agent + skill actions.
-- Supported examples:
-  - `/pe plan DIR=./infra WORKSPACE=staging` → Production Engineering agent runs Terraform plan-only and summarizes risk.
-  - `/pe apply DIR=./infra WORKSPACE=prod` → Confirm-first flow for applies; requires explicit approval.
-  - `/tl review REPO=org/name PR=123` → Team lead PR review; may merge if low risk and green.
-  - `/tl triage REPO=org/name` → Issue triage + dependency mapping.
-  - `/swe impl TASK="feature-x" SPEC=<link-or-notes>` → Implementation workflow with DRAFT PR.
-  - `/test health` → Test health report summary.
-  - `/dbg <desc>` → Debugger scopes logs/code and proposes fixes.
-  - `/arch plan FEATURE="feature-y"` → Architecture integration plan.
