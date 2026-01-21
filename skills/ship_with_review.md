@@ -7,8 +7,10 @@ dependencies: [ gh CLI, codex CLI, git, make/task targets, stability_checks, imp
 safety: Creates branches, PRs, and merges. Follow CLAUDE.md guardrails. Requires green CI before merge.
 steps:
   - Read and analyze GitHub issue.
+  - Check if issue has existing PR; if merged and resolved, close issue and exit.
+  - Create worktree (new branch or existing PR branch as appropriate).
   - Implement solution using worktree workflow.
-  - Create PR and trigger third-party review.
+  - Create PR (if needed) and trigger third-party review.
   - Poll for review comment (with timeout).
   - If APPROVED, continue; if NEEDS_WORK, iterate on implementation.
   - Poll for green CI (with timeout).
@@ -42,13 +44,57 @@ gh issue view <issue> --repo <repo> --json title,body,labels,assignees,milestone
 ### Phase 2: Implementation (via impl_worktree_workflow)
 1. Ensure main is up-to-date
 2. Run stability_checks (phase=preparation)
-3. Create worktree for feature branch: `git worktree add ../repo-issue-<issue> -b issue-<issue>`
+3. **Check if issue already has an associated PR:**
+
+```bash
+# Find PRs that reference this issue
+gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merged
+```
+
+**Decision tree:**
+
+```
+3) Does issue have an existing PR?
+   │
+   ├─► NO existing PR
+   │   └─► 3a) Create worktree for new feature branch:
+   │            git worktree add ../repo-issue-<issue> -b issue-<issue>
+   │            → Continue to step 4
+   │
+   └─► YES existing PR
+       │
+       └─► 3b) Is the PR merged?
+           │
+           ├─► NO (PR is open or closed-not-merged)
+           │   └─► 3b1) Create worktree from existing PR branch:
+           │              git fetch origin <pr-branch>
+           │              git worktree add ../repo-issue-<issue> <pr-branch>
+           │              → Continue to step 4 (taking existing code into account)
+           │
+           └─► YES (PR is merged)
+               │
+               └─► 3b2) Does the merged code resolve the issue?
+                   │    (Analyze issue requirements vs merged changes)
+                   │
+                   ├─► NO (issue not fully resolved)
+                   │   └─► 3b2a) Create worktree for new feature branch:
+                   │              git worktree add ../repo-issue-<issue> -b issue-<issue>-followup
+                   │              → Continue to step 4
+                   │
+                   └─► YES (issue is resolved)
+                       └─► 3b2b) Close the issue and EXIT workflow:
+                                gh issue close <issue> --repo <repo> --comment "Resolved by merged PR #<pr>"
+                                → WORKFLOW COMPLETE (skip remaining phases)
+```
+
 4. Change to worktree directory
 5. Implement the solution based on issue requirements
 6. Run tests and stability_checks (phase=pre-push)
 7. Commit and push
 
-### Phase 3: Create PR
+### Phase 3: Create or Update PR
+
+**If new branch (cases 3a, 3b2a):**
 ```bash
 # Create draft PR linked to issue
 gh pr create --draft --title "<title>" --body "Closes #<issue>
@@ -62,6 +108,20 @@ gh pr create --draft --title "<title>" --body "Closes #<issue>
 
 # Mark ready for review
 gh pr ready
+```
+
+**If existing PR branch (case 3b1):**
+```bash
+# PR already exists - just push changes (done in Phase 2 step 7)
+# Optionally update PR body with new summary
+gh pr edit <pr_number> --body "Updated implementation...
+
+## Summary
+<implementation summary>
+
+## Test Plan
+<verification steps>
+"
 ```
 
 ### Phase 4: Third-Party Review Loop
@@ -161,12 +221,55 @@ git worktree remove ../repo-issue-<issue>
          │
          ▼
 ┌─────────────────┐
+│  Check for      │
+│  Existing PR    │
+└────────┬────────┘
+         │
+         ▼
+    ┌────────────┐
+    │ Has PR?    │
+    └─────┬──────┘
+          │
+    ┌─────┴─────┐
+    │           │
+   NO          YES
+    │           │
+    ▼           ▼
+┌────────┐  ┌────────────┐
+│ Create │  │ PR Merged? │
+│ New    │  └─────┬──────┘
+│ Branch │        │
+└───┬────┘  ┌─────┴─────┐
+    │       │           │
+    │      NO          YES
+    │       │           │
+    │       ▼           ▼
+    │  ┌─────────┐  ┌────────────┐
+    │  │ Checkout│  │ Resolved?  │
+    │  │ Existing│  └─────┬──────┘
+    │  │ Branch  │        │
+    │  └────┬────┘  ┌─────┴─────┐
+    │       │       │           │
+    │       │      NO          YES
+    │       │       │           │
+    │       │       ▼           ▼
+    │       │  ┌─────────┐  ┌─────────────┐
+    │       │  │ Create  │  │ Close Issue │
+    │       │  │ Followup│  │ EXIT        │
+    │       │  │ Branch  │  └─────────────┘
+    │       │  └────┬────┘
+    │       │       │
+    └───────┴───────┘
+            │
+            ▼
+┌─────────────────┐
 │  Implement      │◄─────────────────┐
 └────────┬────────┘                  │
          │                           │
          ▼                           │
 ┌─────────────────┐                  │
 │  Create PR      │                  │
+│  (if needed)    │                  │
 └────────┬────────┘                  │
          │                           │
          ▼                           │
@@ -215,7 +318,7 @@ If PR becomes unmergeable:
 
 ```bash
 # Via command shortcut
-/ship ISSUE=42
+/ship_with_review 42
 
 # Or directly
 "Ship issue #42 using the ship_with_review skill"
