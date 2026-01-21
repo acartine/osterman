@@ -20,4 +20,3 @@ Expected format: `<issue-number>`
 2. Auto-detect repository from git remote: `git remote get-url origin`
 3. Execute the `ship_with_review` skill with `issue=<number>` and `repo=<org/repo>`
 
-Follow the workflow defined in `skills/ship_with_review.md`.
