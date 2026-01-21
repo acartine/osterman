@@ -13,10 +13,9 @@ This document describes the original design goals and the actual implementation 
 ### Completed Components
 
 **Commands (Slash Commands):**
-- `/ship` - Ship changes quickly (commit, push, PR, auto-merge)
 - `/test-health` - Test health reporting with flaky/slow test analysis
 - `/pe` - Production Engineering workflows (plan/apply with safety guardrails)
-- `/tl` - Team Lead workflows (PR review, issue triage, merge management)
+- `/tl` - Team Lead workflows (issue triage, ticket creation)
 - `/sswe` - Staff Software Engineering for complex implementations (Opus-powered, highest capability)
 - `/swe` - Software Engineering implementation (branch workflow, DRAFT PRs)
 - `/jswe` - Junior SWE for simple tasks (faster, cheaper with Haiku)
@@ -97,7 +96,7 @@ The original specification outlined these primary goals:
 **Goal:** Create reusable, composable skill modules
 
 **Planned Skills:**
-- GitHub Management: `gh_issue_triage`, `gh_dependency_detect`, `gh_pr_review`, `gh_pr_merge`
+- GitHub Management: `gh_issue_triage`, `gh_dependency_detect`, `gh_pr_merge`
 - PR Quality & CI: `ci_fail_investigate`, `test_health_report`
 - Infra Guardrails: `tf_plan_only`, `infra_change_review`
 - Implementation: `impl_worktree_workflow`, `arch_integration_plan`
@@ -417,11 +416,11 @@ claude /pe apply DIR=./infra WORKSPACE=prod
 ### Team Lead Workflows
 
 ```bash
-# Review and potentially merge PR
-claude /tl review REPO=org/repo PR=123
-
 # Triage issues
 claude /tl triage REPO=org/repo
+
+# Create a ticket
+claude /tl ticket TYPE='bug' DESC='Search returns incorrect results'
 ```
 
 ### Software Engineering

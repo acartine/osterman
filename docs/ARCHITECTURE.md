@@ -7,7 +7,7 @@
 │                         Claude Code User                         │
 └──────────────────┬──────────────────────────────────────────────┘
                    │
-                   ├─ Invokes ──> Slash Commands (/pe-plan, /tl-review)
+                   ├─ Invokes ──> Slash Commands (/pe-plan, /tl-triage)
                    ├─ Selects ──> Agents (pe, tl, swe, etc.)
                    └─ Triggers ─> Tool Calls (Bash, Write, Read, etc.)
                                   │
@@ -340,25 +340,25 @@ Return: PR summary and diff to caller
 ```
 1. User selects: Agent "tl" (Team Lead)
 
-2. Task: Review PR #123
+2. Task: Triage open issues
 
 3. Agent (tl):
    - Loads agents/tl.md for role context
-   - References skills/gh_pr_review.md for procedure
+   - References skills/gh_issue_triage.md for triage procedure
    - Reads documented steps:
-     1. Fetch diff + metadata
-     2. Run quality checklist
-     3. Summarize architectural impacts
-     4. Draft review with severity tags
+     1. Fetch open issues
+     2. Categorize by type
+     3. Assess priority
+     4. Map dependencies
 
 4. Agent follows steps:
-   - Executes: bin/gh-pr-review (or gh CLI directly)
-   - Analyzes: Code quality, security, tests
-   - Drafts: Review with Critical/Important/Suggestions
-   - May execute: bin/gh-pr-merge if safe
+   - Executes: gh issue list (via gh CLI)
+   - Categorizes: bug, feature, tech-debt, question
+   - Assesses: impact, effort, blockers
+   - Maps dependencies between issues
 
 5. Agent references:
-   - skills/diff_summarizer.md for large diffs
+   - skills/gh_issue_triage.md for triage workflow
    - skills/context_scoper.md to scope relevant files
    - CLAUDE.md for autonomy policies
 ```

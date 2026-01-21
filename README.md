@@ -13,12 +13,11 @@ Before he was Dr. Manhattan, he was Jon Osterman.  We hope someday to be Dr. Man
 
 ### Slash Commands
 
-Nine specialized commands for common development workflows:
+Eight specialized commands for common development workflows:
 
-- **`/ship`** - Ship changes quickly: commit, push, create PR, and auto-merge
 - **`/test-health`** - Generate test health reports with flaky and slow test analysis
 - **`/pe`** - Production Engineering workflows with safety guardrails for infrastructure changes
-- **`/tl`** - Team Lead workflows for PR review, issue triage, and merge management
+- **`/tl`** - Team Lead workflows for issue triage and ticket creation
 - **`/sswe`** - Staff Software Engineering for complex implementations *(obsolete - now uses Opus like /swe)*
 - **`/swe`** - Software Engineering implementation with branch workflow and DRAFT PRs (Opus-powered)
 - **`/jswe`** - Junior Software Engineering for simple tasks *(obsolete - now uses Opus like /swe)*
@@ -81,15 +80,11 @@ make test
 ### Try a Command
 
 ```bash
-# Ship: Quick commit, push, PR, and merge (the fastest path!)
-claude /ship
-claude /ship DESC="feat: add user profile export"
-
-# Team Lead: Review and merge a PR
-claude /tl review_and_merge 123
-
 # Team Lead: Create a bug report
 claude /tl ticket TYPE='bug' DESC='Login fails with OAuth providers'
+
+# Team Lead: Triage open issues
+claude /tl triage
 
 # Staff SWE: Complex implementation (Opus - highest capability)
 claude /sswe ticket 789
@@ -127,50 +122,11 @@ git pull
 
 ### `/tl` - Team Lead Agent
 
-**Purpose**: Autonomous PR review, issue triage, and merge management
-**Model**: Sonnet 4.5
-**Autonomy**: Full - reviews and merges without formal GitHub approvals
+**Purpose**: Autonomous issue triage and ticket creation
+**Model**: Opus 4.5
+**Autonomy**: Full
 
 **Operations:**
-
-#### `review` - Comprehensive PR Review
-Reviews a PR and posts structured findings as a comment.
-
-```bash
-# Review PR in current repo
-/tl review 123
-
-# Review PR in specific repo
-/tl review 456 REPO=acme/backend
-
-# Alternative syntax
-/tl review PR=789 REPO=acme/frontend
-```
-
-**What it does:**
-- Analyzes correctness, security, performance, tests, docs, code quality
-- Categorizes findings: Critical / Important / Suggestions
-- Assesses risk level: Low / Medium / High
-- Posts review comment with structured feedback
-- Includes file:line references for all findings
-
-#### `review_and_merge` - Auto-Merge After Review
-Reviews a PR and automatically merges if ready (no formal approval needed).
-
-```bash
-# Review and auto-merge PR in current repo
-/tl review_and_merge 123
-
-# Review and merge PR in specific repo
-/tl review_and_merge 456 REPO=acme/api
-```
-
-**What it does:**
-- Performs comprehensive review
-- If ready: Posts comment with decision marker, verifies CI, merges immediately
-- If changes needed: Posts review, monitors for updates, re-reviews automatically
-- If discussion needed: Posts comment, waits for manual re-run
-- **Note**: Uses comment-based workflow (no formal GitHub approvals)
 
 #### `triage` - Issue Prioritization
 Triages open issues and maps dependencies.
@@ -406,49 +362,6 @@ Implements a simple feature or bug fix from a GitHub issue.
 
 ---
 
-### `/ship` - Ship Command
-
-**Purpose**: Fast path to get changes merged - commit, push, PR, and auto-merge in one command
-**Model**: Sonnet 4.5
-**Autonomy**: Full - handles branch creation through merge
-
-**Operations:**
-
-#### Quick Ship
-Ship local changes with auto-generated or custom commit message.
-
-```bash
-# Ship with auto-generated commit message
-/ship
-
-# Ship with custom commit description
-/ship DESC="feat: add user profile export"
-
-# Ship bug fix
-/ship DESC="fix: prevent null pointer in payment flow"
-```
-
-**What it does:**
-1. **Branch Check**: If on main, creates new branch; otherwise uses current branch
-2. **Commit**: Stages all changes and commits with provided or auto-generated message
-3. **Push**: Pushes to remote with upstream tracking
-4. **PR**: Creates pull request (or uses existing if already created)
-5. **Review & Merge**: Automatically reviews and merges if ready and CI passes
-
-**When to use:**
-- You have local changes ready to ship
-- Changes are straightforward and well-tested
-- You want the fastest path from local edits to merged PR
-- You're confident in the changes and want automated review/merge
-
-**Safety:**
-- Never force pushes
-- Verifies CI passes before merging
-- Creates PR for review transparency
-- Follows same review criteria as `/tl review_and_merge`
-
----
-
 ## Command Reference (Other Agents)
 
 | Command | Description | Example Usage |
@@ -555,7 +468,6 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 │   ├── pe.md
 │   ├── pull_main.md
 │   ├── rebase.md
-│   ├── ship.md
 │   ├── sswe.md
 │   ├── swe.md
 │   ├── test-health.md
@@ -571,7 +483,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common issues:
 ### Models Used
 
 - **Opus 4.5**: `opus` (all SWE agents: /swe, /sswe, /jswe)
-- **Sonnet 4.5**: `sonnet` (other commands: /ship, /dbg, /arch, /tl, /doc, /orient)
+- **Sonnet 4.5**: `sonnet` (other commands: /dbg, /arch, /tl, /doc, /orient)
 
 Commands specify their model in frontmatter; defaults to Sonnet if not specified.
 

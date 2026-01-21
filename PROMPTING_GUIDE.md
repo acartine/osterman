@@ -2,7 +2,7 @@
 - Help you initiate prompts that maximize autonomy, safety, and token efficiency.
 
 **Pick the Right Agent**
-- `tl`: PR reviews, dependency maps, merge readiness.
+- `tl`: Issue triage, dependency maps, ticket creation.
 - `pe`: Production Engineering (hybrid) — Terraform plan reviews, CI/CD infra, containers/K8s; confirm-first for high-risk ops.
 - `swe`: Implement complex features via standard branch workflow (Sonnet-powered).
 - `jswe`: Implement simple tasks and bug fixes quickly (Haiku-powered, faster and cheaper).
@@ -14,8 +14,8 @@
 **Slash Shortcuts (Recommended)**
 - `/pe plan DIR=./infra WORKSPACE=staging` — Terraform plan-only summary (no apply)
 - `/pe apply DIR=./infra WORKSPACE=prod` — Confirm-first flow for prod apply
-- `/tl review REPO=org/name PR=123` — PR review, may merge if green/low risk
 - `/tl triage REPO=org/name` — Issue triage and dependency mapping
+- `/tl ticket TYPE='bug' DESC='description'` — Create a new issue
 - `/swe impl TASK="feature-x" SPEC=<link-or-notes>` — Implementation workflow for complex features
 - `/jswe impl TASK="fix-bug" SPEC="add null check"` — Fast implementation for simple tasks
 - `/test health` — Test health report
@@ -25,8 +25,6 @@
 **Prompt Recipes (Copy/Paste)**
 - Triage and plan
   - "Agent: tl. Goal: Triage open issues for repo X, produce priority list and dependency graph for the top 10. Keep tokens low; use context_scoper."
-- Review and merge
-  - "Agent: tl. Review PR #123 for repo X. Summarize risks (Critical/Important/Suggestions). If safe and green checks, squash-merge. You may use bin/gh-pr-review and bin/gh-pr-merge."
 - Terraform plan-only
   - "Agent: pe. Run tf_plan_only in ./infra env 'staging' (bin/tf-plan-only). Summarize adds/changes/destroys, highlight IAM/network/cost risks. Do not apply."
 - Debugging
@@ -49,9 +47,9 @@
 - Prefer plan-only and diffs/stat over full file dumps.
 
 **Safety Cues**
-- Say "plan-only" for infra tasks; explicitly type "approval granted" to proceed with applies or merges when prompted.
+- Say "plan-only" for infra tasks; explicitly type "approval granted" to proceed with applies when prompted.
 - For production-impacting tasks, always select `pe` and confirm each step.
 
 **Examples of Good vs. Better**
-- Good: "Review PR #45."
-- Better: "Agent: tl. Review PR #45 in repo X; summarize risks; if green and low risk, squash-merge."
+- Good: "Triage issues."
+- Better: "Agent: tl. Goal: Triage open issues for repo X, produce priority list and dependency graph."

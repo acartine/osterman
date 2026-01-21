@@ -88,7 +88,6 @@ The skill handles common errors:
 This skill is used by:
 - **swe agent**: Check PR state during implementation workflow
 - **jswe agent**: Verify PR status before proceeding
-- **tl agent**: Review and merge operations
 
 ## Benefits
 
