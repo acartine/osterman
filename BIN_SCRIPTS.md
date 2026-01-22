@@ -25,7 +25,5 @@
   - Usage: `QUERY="auth middleware" bin/context-scope` or `PATTERN="src/**/*.ts" bin/context-scope`
 - `bin/diff-summarize` — Summarize diffs with stats and focused patches.
   - Usage: `RANGE="origin/main...HEAD" bin/diff-summarize`
-- `bin/impl-worktree-workflow` — Echo the worktree-based workflow steps for parallel development.
-  - Usage: `TASK="feature-x" bin/impl-worktree-workflow`
 
 See hooks/pre_safety.md for safety policies and PROMPTING_GUIDE.md for examples.
