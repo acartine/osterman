@@ -1,6 +1,8 @@
 ---
 name: ship_with_review
 description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop.
+context: fork
+agent: swe
 inputs: { issue: required, repo: optional }
 outputs: { pr_url: string, merge_status: string }
 dependencies: [ gh CLI, codex CLI, git, make/task targets, stability_checks ]
@@ -114,7 +116,12 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
    ```
    ASSERT: Current directory is the worktree
    ```
-5. Implement the solution based on issue requirements
+5. Implement the solution based on issue requirements.  Additional nonfunctional requirements include:
+- When adding new functions, the maximum length is 75 lines.
+- When adding new files, the maximum size is 500 lines.
+- If an existing function is more than 75 lines long, don't add new logic to it.  Add a new function and reference the new function from the old one.
+- If an existing file is more than 500 lines long, don't add new logic or data types to it.  Create new file(s) and reference them from the old one.
+- Increasing function and file sizes beyond limits is ok IF the increase was simply to reference your new code.
 6. Run tests and stability_checks (phase=pre-push):
    ```
    ASSERT: All local tests pass
@@ -126,6 +133,10 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
 
 #### Post-conditions
 - Implementation complete
+- All new functions are <= 75 lines
+- All new files are <= 500 lines
+- No function was extended beyond 75 lines except to refer elsewhere
+- No file was extended beyond 500 lines except to refer elsewhere
 - Changes pushed to remote branch
 - Ready to create/update PR
 
