@@ -34,16 +34,39 @@ Complete workflow that takes a GitHub issue from start to merged PR, including a
 ## Workflow
 
 ### Phase 1: Issue Analysis
+
+#### Pre-conditions
+- Valid issue number provided
+- Repository is accessible
+
+#### Steps
 ```bash
 # Fetch issue details
 gh issue view <issue> --repo <repo> --json title,body,labels,assignees,milestone
 
+ASSERT: Issue exists and is open (or has actionable state)
+
 # Understand requirements, acceptance criteria, and scope
 ```
 
+#### Post-conditions
+- Issue requirements are understood
+- Ready to check for existing PRs
+
 ### Phase 2: Implementation (via impl_worktree_workflow)
-1. Ensure main is up-to-date
-2. Run stability_checks (phase=preparation)
+
+#### Pre-conditions
+- Issue has been analyzed and requirements understood
+
+#### Steps
+1. Ensure main is up-to-date:
+   ```
+   ASSERT: git checkout main && git pull origin main succeeds
+   ```
+2. Run stability_checks (phase=preparation):
+   ```
+   ASSERT: Stability checks pass before starting work
+   ```
 3. **Check if issue already has an associated PR:**
 
 ```bash
@@ -87,12 +110,30 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
                                 → WORKFLOW COMPLETE (skip remaining phases)
 ```
 
-4. Change to worktree directory
+4. Change to worktree directory:
+   ```
+   ASSERT: Current directory is the worktree
+   ```
 5. Implement the solution based on issue requirements
-6. Run tests and stability_checks (phase=pre-push)
-7. Commit and push
+6. Run tests and stability_checks (phase=pre-push):
+   ```
+   ASSERT: All local tests pass
+   ```
+7. Commit and push:
+   ```
+   ASSERT: Changes have been committed and pushed to remote
+   ```
+
+#### Post-conditions
+- Implementation complete
+- Changes pushed to remote branch
+- Ready to create/update PR
 
 ### Phase 3: Create or Update PR
+
+#### Pre-conditions
+- Implementation is complete
+- Changes have been pushed to remote
 
 **If new branch (cases 3a, 3b2a):**
 ```bash
@@ -124,7 +165,16 @@ gh pr edit <pr_number> --body "Updated implementation...
 "
 ```
 
+#### Post-conditions
+- PR exists and is in "open" state
+- PR is marked ready for review (not draft)
+- Ready to trigger third-party review
+
 ### Phase 4: Third-Party Review Loop
+
+#### Pre-conditions
+- PR has been created or updated
+- Changes have been pushed to remote
 
 #### Trigger Review
 ```bash
@@ -145,13 +195,39 @@ The review returns JSON with a `status` field:
 gh pr comment <pr_number> --repo <repo> --body "<review_content>"
 ```
 
+#### Review Loop
+```
+LOOP:
+  1. Trigger codex review
+  2. Parse response JSON
+  3. Post review to PR
+  4. IF status == "APPROVED":
+       - GOTO Phase 5 (Poll CI)
+  5. IF status == "NEEDS_WORK":
+       - GOTO Handle NEEDS_WORK
+```
+
 #### Handle NEEDS_WORK
-If status is `NEEDS_WORK`:
+```
+ASSERT: Review status is NEEDS_WORK with actionable feedback
+
 1. Parse the review feedback
+
 2. Make necessary code changes
-3. Run tests and stability_checks (phase=pre-push)
-4. Commit and push
-5. **Go back to "Trigger Review"**
+
+3. Run tests and stability_checks (phase=pre-push):
+   ASSERT: Local tests pass before pushing
+
+4. Commit and push:
+   git add -A && git commit -m "fix: address review feedback" && git push
+   ASSERT: Changes have been pushed to remote
+
+5. GOTO Trigger Review (restart the loop)
+```
+
+#### Post-conditions (on APPROVED)
+- Review status is APPROVED
+- Ready to proceed to CI polling phase
 
 #### Timeout
 - Maximum review iterations: 5
@@ -159,33 +235,72 @@ If status is `NEEDS_WORK`:
 
 ### Phase 5: CI Green Loop
 
+#### Pre-conditions
+- PR has been created and is ready for review
+- Codex review has returned `APPROVED`
+
 #### Poll for CI Status
 ```bash
 # Check PR status
 gh pr checks <pr_number> --repo <repo>
 ```
 
-#### Polling Strategy
+#### Polling Loop
+```
+LOOP:
+  1. Check CI status
+  2. IF status == "pending" or "in_progress":
+       - Wait 30 seconds
+       - GOTO LOOP
+  3. IF status == "completed":
+       - IF all checks passed:
+           - GOTO Merge Phase
+       - ELSE (any check failed):
+           - GOTO Fix CI Issues
+```
+
+#### Polling Configuration
 ```
 interval: 30 seconds
-timeout: 10 minutes
+timeout: 10 minutes (max wait for pending checks)
+max_fix_iterations: 3
 ```
 
-#### Handle CI Results
-- **All green**: Continue to merge phase
-- **Any red/failing**:
-  1. Fetch failed check logs: `gh run view <run_id> --log-failed`
-  2. Analyze failures
-  3. Fix issues
-  4. Run tests locally
-  5. Commit and push
-  6. **Go back to "Poll for CI Status"**
+#### Fix CI Issues (when checks fail)
+```
+ASSERT: CI checks have completed with at least one failure
 
-#### Timeout
-- Maximum CI fix iterations: 3
-- If exceeded, pause and notify operator for manual intervention
+1. Fetch failed check logs:
+   gh run view <run_id> --log-failed
+
+2. Analyze failures and identify root cause
+
+3. Implement fixes in worktree
+
+4. Run tests locally to verify fix:
+   - Run stability_checks (phase=pre-push)
+
+5. Commit and push:
+   git add -A && git commit -m "fix: address CI failures" && git push
+
+ASSERT: Changes have been pushed to remote
+
+6. GOTO Poll for CI Status (restart the loop)
+```
+
+#### Post-conditions (on success)
+- All CI checks are passing
+- Ready to proceed to merge phase
+
+#### Timeout Handling
+- If pending checks exceed 10 minutes: pause and notify operator
+- If fix iterations exceed 3: pause and notify operator for manual intervention
 
 ### Phase 6: Merge
+
+#### Pre-conditions
+- All CI checks are passing
+- Review status is APPROVED
 
 #### Pre-merge Verification
 ```bash
@@ -193,24 +308,54 @@ timeout: 10 minutes
 gh pr view <pr_number> --repo <repo> --json mergeable,mergeStateStatus
 ```
 
+```
+ASSERT: mergeable == true
+ASSERT: mergeStateStatus == "CLEAN" or "UNSTABLE" (no blocking issues)
+```
+
 #### Squash Merge
 ```bash
 gh pr merge <pr_number> --repo <repo> --squash --delete-branch
 ```
 
+```
+ASSERT: Merge command exits with status 0
+ASSERT: PR state is now "MERGED"
+```
+
+#### Post-conditions
+- PR has been merged to main
+- Remote branch has been deleted
+
 ### Phase 7: Cleanup
 
+#### Pre-conditions
+- PR has been successfully merged
+- Currently in worktree directory
+
+#### Steps
 ```bash
 # Return to main repo directory
 cd <original_repo_path>
+
+ASSERT: Current directory is the main repository (not worktree)
 
 # Checkout main and pull
 git checkout main
 git pull origin main
 
+ASSERT: Local main branch is up-to-date with merged changes
+
 # Remove worktree
 git worktree remove ../repo-issue-<issue>
+
+ASSERT: Worktree directory no longer exists
 ```
+
+#### Post-conditions
+- Local main branch contains the merged changes
+- Worktree has been cleaned up
+- Ready for next task
 
 ## State Machine
 
@@ -278,19 +423,41 @@ git worktree remove ../repo-issue-<issue>
 └────────┬────────┘
          │ APPROVED
          ▼
-┌─────────────────┐    RED/FAILING
-│  Poll CI        │──────────────────┐
-└────────┬────────┘                  │
-         │ ALL GREEN                 │
-         ▼                           │
-┌─────────────────┐                  │
-│  Squash Merge   │                  │
-└────────┬────────┘                  │
-         │                           │
-         ▼                           │
-┌─────────────────┐    Fix & Push    │
-│  Cleanup        │◄─────────────────┘
-└─────────────────┘   (then re-poll)
+         ┌──────────────────────────┐
+         │                          │
+         ▼                          │
+┌─────────────────┐                 │
+│  Poll CI        │──► NOT DONE ────┘
+└────────┬────────┘    (wait 30s)
+         │ DONE
+         ▼
+    ┌───────────┐
+    │ Passing?  │
+    └─────┬─────┘
+          │
+    ┌─────┴─────┐
+    │           │
+   YES         NO
+    │           │
+    │           ▼
+    │  ┌─────────────────┐
+    │  │  Fix CI Issues  │
+    │  └────────┬────────┘
+    │           │
+    │           ▼
+    │  ┌─────────────────┐
+    │  │  Push Fixes     │───► (back to Poll CI)
+    │  └─────────────────┘
+    │
+    ▼
+┌─────────────────┐
+│  Squash Merge   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Cleanup        │
+└─────────────────┘
 ```
 
 ## Error Handling
