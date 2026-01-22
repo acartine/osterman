@@ -233,6 +233,6 @@ Use SSWE when:
 - The feature has high business impact or risk
 
 ## Reference Documentation
-- **Skills**: `skills/impl_worktree_workflow.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking, `skills/iac.md` for infrastructure as code with Terraform, `skills/stability_checks.md` for stability verification
+- **Skills**: `skills/ship_with_review.md` for detailed workflow, `skills/gh_pr_view.md` for PR state checking, `skills/iac.md` for infrastructure as code with Terraform, `skills/stability_checks.md` for stability verification
 - **Agent**: `agents/sswe.md` for full implementation patterns
 - **CLAUDE.md**: Agent Development Flow section

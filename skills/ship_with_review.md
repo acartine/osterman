@@ -3,7 +3,7 @@ name: ship_with_review
 description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop.
 inputs: { issue: required, repo: optional }
 outputs: { pr_url: string, merge_status: string }
-dependencies: [ gh CLI, codex CLI, git, make/task targets, stability_checks, impl_worktree_workflow ]
+dependencies: [ gh CLI, codex CLI, git, make/task targets, stability_checks ]
 safety: Creates branches, PRs, and merges. Follow CLAUDE.md guardrails. Requires green CI before merge.
 steps:
   - Read and analyze GitHub issue.
@@ -19,7 +19,7 @@ steps:
 tooling:
   - commands: bin/ship-with-review
   - gh; git; codex; make/task
-related_skills: [ impl_worktree_workflow, stability_checks, gh_pr_merge ]
+related_skills: [ stability_checks, gh_pr_merge ]
 ---
 
 # Ship With Review Skill
@@ -53,7 +53,7 @@ ASSERT: Issue exists and is open (or has actionable state)
 - Issue requirements are understood
 - Ready to check for existing PRs
 
-### Phase 2: Implementation (via impl_worktree_workflow)
+### Phase 2: Implementation
 
 #### Pre-conditions
 - Issue has been analyzed and requirements understood

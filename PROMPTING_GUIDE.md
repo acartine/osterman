@@ -30,9 +30,9 @@
 - Debugging
   - "Agent: code-debugger. Context: failing unit test Y. Expected vs actual, stack trace here: ... Scope relevant files and propose fixes + verification steps."
 - Implementation (complex features)
-  - "Agent: swe. Spec: implement feature X per doc link. Follow impl_worktree_workflow (bin/impl-worktree-workflow). Open DRAFT PR and iterate until green."
+  - "Agent: swe. Spec: implement feature X per doc link. Follow ship_with_review (bin/impl-worktree-workflow). Open DRAFT PR and iterate until green."
 - Implementation (simple tasks)
-  - "Agent: jswe. Spec: fix bug Y by adding validation. Follow impl_worktree_workflow. Open DRAFT PR and iterate until green. Use Haiku for speed."
+  - "Agent: jswe. Spec: fix bug Y by adding validation. Follow ship_with_review. Open DRAFT PR and iterate until green. Use Haiku for speed."
 - Test health
   - "Agent: test-engineer. Analyze last 10 CI runs. Produce test health report: flakiest tests, slowest suites, top fixes. You may use bin/test-health-report."
 - Architecture

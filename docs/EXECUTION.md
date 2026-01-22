@@ -99,7 +99,7 @@ The original specification outlined these primary goals:
 - GitHub Management: `gh_issue_triage`, `gh_dependency_detect`, `gh_pr_merge`
 - PR Quality & CI: `ci_fail_investigate`, `test_health_report`
 - Infra Guardrails: `tf_plan_only`, `infra_change_review`
-- Implementation: `impl_worktree_workflow`, `arch_integration_plan`
+- Implementation: `ship_with_review`, `arch_integration_plan`
 - Token Efficiency: `context_scoper`, `diff_summarizer`
 
 **Status:** ✓ Completed - Skills created in `skills/` directory
