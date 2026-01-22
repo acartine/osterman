@@ -81,13 +81,13 @@
     "ask": []
   },
   "hooks": {
-    "PermissionRequest": [
+    "Notification": [
       {
-        "matcher": "Bash",
+        "matcher": "permission_prompt",
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/approve-python.sh"
+            "command": "~/.claude/hooks/permission-handler.sh"
           }
         ]
       }
@@ -99,10 +99,6 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/pre_safety_check.sh"
-          },
-          {
-            "type": "command",
-            "command": ".claude/hooks/prefer-shell-exec.sh"
           }
         ]
       }
