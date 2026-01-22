@@ -16,9 +16,7 @@ This document describes the original design goals and the actual implementation 
 - `/test-health` - Test health reporting with flaky/slow test analysis
 - `/pe` - Production Engineering workflows (plan/apply with safety guardrails)
 - `/tl` - Team Lead workflows (issue triage, ticket creation)
-- `/sswe` - Staff Software Engineering for complex implementations (Opus-powered, highest capability)
 - `/swe` - Software Engineering implementation (branch workflow, DRAFT PRs)
-- `/jswe` - Junior SWE for simple tasks (faster, cheaper with Haiku)
 - `/dbg` - Code Debugger (scoped analysis, fix proposals)
 - `/arch` - Software Architect (integration planning)
 - `/doc` - Documentation creation and updates
@@ -43,7 +41,6 @@ This document describes the original design goals and the actual implementation 
 **Agents (Referenced by commands):**
 - `agents/pe.md` - Production Engineering agent
 - `agents/tl.md` - Team Lead agent
-- `agents/sswe.md` - Staff Software Engineering agent (Opus-powered)
 - `agents/swe.md` - Software Engineering agent
 - `agents/test-engineer.md` - Test Engineer agent
 - `agents/code-debugger.md` - Debugger agent
@@ -129,7 +126,6 @@ The original specification outlined these primary goals:
 **Agent Composition:**
 - `tl` → skills: GitHub management, CI investigation
 - `pe` → skills: Terraform plan-only, infra review, context scoping
-- `sswe` → skills: Branch workflow, diff summarization, context scoping (Opus model)
 - `swe` → skills: Branch workflow, diff summarization, context scoping
 - `test-engineer` → skills: Test health reporting, diff summarization
 - `code-debugger` → skills: Context scoping
@@ -302,7 +298,6 @@ osterman/
 │   ├── arch.md
 │   ├── dbg.md
 │   ├── pe.md
-│   ├── sswe.md
 │   ├── swe.md
 │   ├── test-health.md
 │   └── tl.md
@@ -312,7 +307,6 @@ osterman/
 ├── agents/                # Agent implementation specifications
 │   ├── pe.md
 │   ├── tl.md
-│   ├── sswe.md
 │   ├── swe.md
 │   ├── test-engineer.md
 │   ├── code-debugger.md
@@ -346,9 +340,8 @@ hooks/*.sh (Safety & telemetry)
 
 ### Models Used
 
-- **Opus 4.1:** `opus` (highest capability for complex tasks - /sswe)
+- **Opus 4.5:** `opus` (for /swe)
 - **Sonnet 4.5:** `sonnet` (default for standard operations)
-- **Haiku 4.5:** `claude-haiku-4-5-20251001` (for lightweight operations - /jswe)
 
 Commands specify model in frontmatter; defaults to Sonnet if unspecified.
 
@@ -426,14 +419,8 @@ claude /tl ticket TYPE='bug' DESC='Search returns incorrect results'
 ### Software Engineering
 
 ```bash
-# Complex implementation with highest capability (Opus)
-claude /sswe impl TASK="microservices-migration" SPEC="Split auth service into microservices"
-
-# Standard implementation (Sonnet)
+# Standard implementation
 claude /swe impl TASK="add-auth" SPEC="Add JWT authentication"
-
-# Simple implementation (Haiku)
-claude /jswe impl TASK="fix-typo" SPEC="Fix typo in error message"
 ```
 
 ### Debugging

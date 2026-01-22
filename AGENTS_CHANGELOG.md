@@ -1,19 +1,23 @@
 # Agents & Skills Changelog
 
+## 2025-01-22
+- Removed `jswe` and `sswe` agents/commands (consolidated into `swe`)
+- Elevated `ship_with_review` as THE signature workflow
+- Added "Ralph Wiggum Loop" terminology to describe the automated review cycle
+  - Named after the Simpsons character: after enough review iterations, even Ralph could approve it
+  - Philosophy: minimize operator thrashing by delegating review to Codex
+  - Operator becomes escalation path rather than bottleneck
+- Simplified documentation to focus on `/ship_with_review` as the primary entry point
+
 ## 2025-01-20
 - Added `ship_with_review` skill and command for end-to-end issue-to-merge workflow with automated third-party code review loop.
   - Reads GitHub issue, implements solution in worktree, creates PR
   - Triggers codex review and iterates on `NEEDS_WORK` feedback (max 5 attempts)
   - Polls for green CI and fixes failures (max 3 attempts)
   - Squash merges on success, cleans up worktree
-  - **Note**: Only supports GitHub issues as input; description-based workflows not supported.
-- Updated `jswe`, `swe`, `sswe` ticket workflows to delegate to `ship_with_review` skill.
-  - `impl` workflows remain unchanged (manual PR flow)
-  - `ticket` workflows now get automated review loop and merge
 
 ## 2025-10-23
-- Upgraded swe to Sonnet
-- Introduced jswe, a Haiku "junior swe" for simpler tasks
+- Upgraded swe to Opus
 
 ## 2025-10-19
 - Renamed `team-lead-pr-reviewer` agent to `tl` (big-tech style shorthand).

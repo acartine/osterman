@@ -27,7 +27,34 @@ related_skills: [ stability_checks, gh_pr_merge ]
 # Ship With Review Skill
 
 ## Overview
+
 Complete workflow that takes a GitHub issue from start to merged PR, including an automated third-party code review loop. Handles iteration when review requests changes or CI fails.
+
+**This is osterman's signature capability.**
+
+## The Ralph Wiggum Loop
+
+Traditional AI-assisted development suffers from **operator thrashing**—the human becomes a bottleneck, repeatedly reviewing code and requesting changes. This defeats the purpose of autonomous agents.
+
+The `ship_with_review` skill solves this by delegating code review to a third-party AI (Codex) instead of the operator:
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Implement  │────►│   Codex     │────►│ APPROVED?   │
+│  Solution   │     │   Review    │     │             │
+└─────────────┘     └─────────────┘     └──────┬──────┘
+       ▲                                       │
+       │            NEEDS_WORK                 │
+       └───────────────────────────────────────┘
+```
+
+We call this the **"Ralph Wiggum Loop"**—after enough automated review cycles, even Ralph could approve it. The agent iterates autonomously until the code passes review, then proceeds to CI verification and merge.
+
+**Benefits:**
+- **No operator thrashing**: Kick off the workflow and check back when it's done
+- **Consistent review quality**: Every PR gets the same thorough automated review
+- **Faster iteration**: Agent addresses feedback immediately without waiting for human availability
+- **Operator as escalation path**: Humans only intervene when automation hits its limits (max 5 review iterations, max 3 CI fix attempts)
 
 ## Inputs
 - `issue`: GitHub issue number (required)
