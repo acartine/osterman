@@ -1,28 +1,6 @@
----
+## Metadata
 name: ship_with_review
-description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop.
-context: fork
-agent: swe
-inputs: { issue: required, repo: optional }
-outputs: { pr_url: string, merge_status: string }
-dependencies: [ gh CLI, codex CLI, git, make/task targets, stability_checks ]
-safety: Creates branches, PRs, and merges. Follow CLAUDE.md guardrails. Requires green CI before merge.
-steps:
-  - Read and analyze GitHub issue.
-  - Check if issue has existing PR; if merged and resolved, close issue and exit.
-  - Create worktree (new branch or existing PR branch as appropriate).
-  - Implement solution using worktree workflow.
-  - Create PR (if needed) and trigger third-party review.
-  - Poll for review comment (with timeout).
-  - If APPROVED, continue; if NEEDS_WORK, iterate on implementation.
-  - Poll for green CI (with timeout).
-  - If all green, squash merge; if any red, iterate on implementation.
-  - Checkout main and pull.
-tooling:
-  - commands: bin/ship-with-review
-  - gh; git; codex; make/task
-related_skills: [ stability_checks, gh_pr_merge ]
----
+description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop.  Use when user invokes explicitly, or any request to address a github issue.
 
 # Ship With Review Skill
 
@@ -30,9 +8,6 @@ related_skills: [ stability_checks, gh_pr_merge ]
 
 Complete workflow that takes a GitHub issue from start to merged PR, including an automated third-party code review loop. Handles iteration when review requests changes or CI fails.
 
-**This is osterman's signature capability.**
-
-## The Ralph Wiggum Loop
 
 Traditional AI-assisted development suffers from **operator thrashing**—the human becomes a bottleneck, repeatedly reviewing code and requesting changes. This defeats the purpose of autonomous agents.
 
@@ -48,20 +23,24 @@ The `ship_with_review` skill solves this by delegating code review to a third-pa
        └───────────────────────────────────────┘
 ```
 
-We call this the **"Ralph Wiggum Loop"**—after enough automated review cycles, even Ralph could approve it. The agent iterates autonomously until the code passes review, then proceeds to CI verification and merge.
-
 **Benefits:**
 - **No operator thrashing**: Kick off the workflow and check back when it's done
 - **Consistent review quality**: Every PR gets the same thorough automated review
 - **Faster iteration**: Agent addresses feedback immediately without waiting for human availability
 - **Operator as escalation path**: Humans only intervene when automation hits its limits (max 5 review iterations, max 3 CI fix attempts)
 
+## Coding guidelines
+- When adding new functions, the maximum length is 75 lines.
+- When adding new files, the maximum size is 500 lines.
+- If an existing function is more than 75 lines long, don't add new logic to it.  Add a new function and reference the new function from the old one.
+- If an existing file is more than 500 lines long, don't add new logic or data types to it.  Create new file(s) and reference them from the old one.
+- Increasing function and file sizes beyond limits is ok IF the increase was simply to reference your new code.
+
 ## Inputs
-- `issue`: GitHub issue number (required)
-- `repo`: Repository in `owner/repo` format (optional, defaults to current repo)
+A Github Issue Id for the repo
 
-## Workflow
-
+## Instructions
+Follow this as closely as you can.
 ### Phase 1: Issue Analysis
 
 #### Pre-conditions
@@ -143,12 +122,7 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
    ```
    ASSERT: Current directory is the worktree
    ```
-5. Implement the solution based on issue requirements.  Additional nonfunctional requirements include:
-- When adding new functions, the maximum length is 75 lines.
-- When adding new files, the maximum size is 500 lines.
-- If an existing function is more than 75 lines long, don't add new logic to it.  Add a new function and reference the new function from the old one.
-- If an existing file is more than 500 lines long, don't add new logic or data types to it.  Create new file(s) and reference them from the old one.
-- Increasing function and file sizes beyond limits is ok IF the increase was simply to reference your new code.
+5. Implement the solution based on issue requirements and coding guidelines above.
 6. Run tests and stability_checks (phase=pre-push):
    ```
    ASSERT: All local tests pass
@@ -535,4 +509,3 @@ If PR becomes unmergeable:
 - Always verify CI is green before merge
 - Preserve PR history with squash merge
 - Clean up worktrees after completion
-- Timeout and iteration limits prevent infinite loops
