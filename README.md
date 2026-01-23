@@ -12,7 +12,7 @@ Before he was Dr. Manhattan, he was Jon Osterman. We hope someday to be Dr. Manh
 
 ## The Signature Workflow: Ship With Review
 
-The crown jewel of osterman is **`/ship_with_review`**—an end-to-end autonomous workflow that takes a GitHub issue from triage to merged PR with minimal operator intervention.
+The crown jewel of osterman is the **`ship_with_review` skill**—an end-to-end autonomous workflow that takes a GitHub issue from triage to merged PR with minimal operator intervention.
 
 ### The Problem: Operator Thrashing
 
@@ -49,12 +49,19 @@ We call this the **"Ralph Wiggum Loop"**—after enough automated review cycles,
 
 ### Quick Start
 
-```bash
-# Ship a feature from a GitHub issue
-/ship_with_review 123
+Simply ask the agent to ship a GitHub issue:
+
+```
+Ship issue 123 using ship_with_review
 ```
 
-This single command will:
+Or:
+
+```
+Use the ship_with_review skill to implement and merge issue #123
+```
+
+This skill will:
 1. Read and analyze the GitHub issue
 2. Create a feature branch in a worktree
 3. Implement the solution

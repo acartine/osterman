@@ -73,7 +73,6 @@
       "SlashCommand(/test-health:*)",
       "SlashCommand(/orient:*)",
       "SlashCommand(/doc:*)",
-      "SlashCommand(/ship_with_review:*)",
       "mcp__chrome-devtools__*",
       "mcp__shemcp__*",
       "Task(*)"

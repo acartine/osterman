@@ -3,7 +3,7 @@
 
 ## The Recommended Workflow: Ship With Review
 
-**For feature work, use `/ship_with_review`.** This is osterman's signature capability.
+**For feature work, use the `ship_with_review` skill.** This is osterman's signature capability.
 
 ### The Ralph Wiggum Loop
 
@@ -19,13 +19,21 @@ Traditional AI development creates "thrashing"—operator repeatedly reviews and
 
 ### Usage
 
-```bash
-/ship_with_review 123
+Simply ask the agent to ship a GitHub issue using the ship_with_review workflow:
+
+```
+Ship issue 123 using ship_with_review
 ```
 
-That's it. The agent handles implementation, review iteration, CI fixes, and merge.
+Or reference the skill directly:
 
-## Other Commands
+```
+Use the ship_with_review skill to implement and merge issue #123
+```
+
+The agent handles implementation, review iteration, CI fixes, and merge.
+
+## Commands
 
 | Command | Use Case |
 |---------|----------|

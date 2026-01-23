@@ -495,12 +495,12 @@ If PR becomes unmergeable:
 
 ## Example Invocation
 
-```bash
-# Via command shortcut
-/ship_with_review 42
-
-# Or directly
+```
+# Ask the agent to use the skill
 "Ship issue #42 using the ship_with_review skill"
+
+# Or reference directly
+"Use ship_with_review to implement and merge issue #42"
 ```
 
 ## Safety Notes
