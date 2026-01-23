@@ -64,6 +64,7 @@ case "$TOOL_NAME" in
         block_operation "Recursive force delete with dangerous patterns requires approval"
       fi
     fi
+
     ;;
 esac
 

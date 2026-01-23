@@ -80,9 +80,9 @@
     "ask": []
   },
   "hooks": {
-    "Notification": [
+    "PermissionRequest": [
       {
-        "matcher": "permission_prompt",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",

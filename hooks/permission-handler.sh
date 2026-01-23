@@ -1,5 +1,5 @@
 #!/bin/bash
-# Notification hook for permission_prompt
+# PermissionRequest hook for Bash commands
 # Handles permission requests with conditional allow/deny logic
 #
 # Input format:
@@ -8,32 +8,34 @@
 #   "transcript_path": "/path/to/transcript.jsonl",
 #   "cwd": "/path/to/cwd",
 #   "permission_mode": "default",
-#   "hook_event_name": "Notification",
-#   "message": "Claude needs your permission to use Bash",
-#   "notification_type": "permission_prompt"
+#   "hook_event_name": "PermissionRequest",
+#   "tool_name": "Bash",
+#   "tool_input": {
+#     "command": "...",
+#     "description": "..."
+#   },
+#   "tool_use_id": "toolu_01ABC123..."
 # }
 
 input=$(cat)
-message=$(echo "$input" | jq -r '.message // empty')
+command=$(echo "$input" | jq -r '.tool_input.command // empty')
 
-# 1) If message contains 'venv' -> DENY (use poetry instead)
-if echo "$message" | grep -qi 'venv'; then
+# 1) If command contains 'venv' -> DENY (use poetry instead)
+if echo "$command" | grep -qi 'venv'; then
   cat <<'EOF'
 {"hookSpecificOutput": {"hookEventName": "PermissionRequest", "decision": {"behavior": "deny", "message": "This is a poetry project, use poetry or a make target instead"}}}
 EOF
   exit 0
 fi
 
-# 2) If message contains 'python3' or 'PYTHONPATH' -> ALLOW
-if echo "$message" | grep -qi -E '(python3|PYTHONPATH)'; then
+# 2) If command contains 'python3' or 'PYTHONPATH' -> ALLOW
+if echo "$command" | grep -qi -E '(python3|PYTHONPATH)'; then
   cat <<'EOF'
 {"hookSpecificOutput": {"hookEventName": "PermissionRequest", "decision": {"behavior": "allow"}}}
 EOF
   exit 0
 fi
 
-# 3) Otherwise -> suggest alternatives via deny with helpful message
-cat <<'EOF'
-{"hookSpecificOutput": {"hookEventName": "PermissionRequest", "decision": {"behavior": "deny", "message": "Try using mcp__shemcp__shell_exec for better sandboxing, or check for a Makefile/Taskfile target that solves the same problem."}}}
-EOF
+# 3) Default: no output means fall through to normal permission prompt
+# (Don't deny everything - only deny specific patterns like venv)
 exit 0
