@@ -70,17 +70,31 @@ This skill will:
 6. Poll for green CI and fix failures (up to 3 times)
 7. Squash merge and clean up
 
-## Other Commands
+## Available Skills
 
-| Command | Description |
-|---------|-------------|
-| `/tl triage` | Triage open issues, map dependencies |
-| `/tl ticket TYPE='bug' DESC='...'` | Create a GitHub issue |
-| `/pe plan DIR=./infra` | Terraform plan with risk summary |
-| `/pe apply DIR=./infra` | Terraform apply (requires approval) |
-| `/test-health` | Analyze test suite for flaky/slow tests |
-| `/dbg "error message"` | Debug with scoped analysis |
-| `/arch plan FEATURE="..."` | Architecture planning |
+Skills are invoked by referencing them in conversation or using the Skill tool:
+
+| Skill | Description |
+|-------|-------------|
+| `ship_with_review` | End-to-end issue-to-merge workflow (the signature workflow) |
+| `orientation` | Orient to codebase and project structure |
+| `documentation` | Create or update documentation |
+| `tf_plan_only` | Terraform plan with risk summary (safe, no apply) |
+| `iac` | Infrastructure-as-code workflows |
+| `gh_issue_create` | Create a GitHub issue |
+| `gh_pr_merge` | Merge a PR after checks pass |
+| `gh_pr_view` | View PR details and diff |
+| `rebase` | Rebase current branch on main |
+| `pull_main` | Pull latest from main branch |
+| `stability_checks` | Run stability/sanity checks |
+
+## Available Agents
+
+| Agent | Description |
+|-------|-------------|
+| `pe` | Production Engineering - infra/cloud/terraform tasks |
+| `swe` | Software Engineering - implementation tasks |
+| `doc` | Documentation - creating/updating docs |
 
 ## Installation
 

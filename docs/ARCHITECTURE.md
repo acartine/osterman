@@ -7,8 +7,8 @@
 │                         Claude Code User                         │
 └──────────────────┬──────────────────────────────────────────────┘
                    │
-                   ├─ Invokes ──> Slash Commands (/pe-plan, /tl-triage)
-                   ├─ Selects ──> Agents (pe, tl, swe, etc.)
+                   ├─ Invokes ──> Skills (ship_with_review, tf_plan_only, etc.)
+                   ├─ Selects ──> Agents (pe, swe, doc)
                    └─ Triggers ─> Tool Calls (Bash, Write, Read, etc.)
                                   │
                                   ▼
@@ -17,8 +17,8 @@
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                   │
 │  ┌────────────────┐    ┌───────────────┐    ┌────────────────┐ │
-│  │ Slash Commands │    │    Agents     │    │     Hooks      │ │
-│  │  (commands/)   │    │  (agents/)    │    │   (hooks/)     │ │
+│  │     Skills     │    │    Agents     │    │     Hooks      │ │
+│  │   (skills/)    │    │  (agents/)    │    │   (hooks/)     │ │
 │  └────────────────┘    └───────────────┘    └────────────────┘ │
 │         │                      │                      │          │
 │         │                      │                      │          │
@@ -61,49 +61,51 @@
 
 ## Component Responsibilities
 
-### 1. Slash Commands (`commands/`)
+### 1. Skills (`skills/`)
 
-**Type**: Markdown files with prompts
-**Location**: `~/.claude/commands/*.md`
-**Invocation**: User types `/command-name` in chat
+**Type**: Markdown files with workflow documentation
+**Location**: `~/.claude/skills/*.md`
+**Invocation**: User references skill in conversation or uses Skill tool
 
 ```
-User: /pe-plan DIR=./terraform WORKSPACE=staging
+User: "Use the ship_with_review skill to implement issue #123"
   │
   ▼
-commands/pe-plan.md loaded as prompt
+skills/ship_with_review.md loaded as context
   │
   ▼
-Prompt expanded with $ARGUMENTS replaced
+Agent follows documented workflow
   │
   ▼
-Agent executes with expanded prompt
+Task completed per skill guidance
 ```
 
 **Responsibilities**:
-- Define custom prompts for common workflows
-- Accept and parse user arguments via `$ARGUMENTS`
-- Specify allowed tools and model preferences
-- Provide structured guidance to agents
+- Document reusable workflows and patterns
+- Provide step-by-step procedures
+- List required tools and dependencies
+- Define safety considerations
 
-**Example Flow**:
-```
-/pe-plan DIR=./infra WORKSPACE=staging
-    ↓
-Load: commands/pe-plan.md
-    ↓
-Replace: $ARGUMENTS with "DIR=./infra WORKSPACE=staging"
-    ↓
-Execute: Production Engineering agent with expanded prompt
-    ↓
-Agent: Runs terraform plan following the prompt instructions
-```
+**Available Skills**:
+- `ship_with_review` - End-to-end issue-to-merge workflow
+- `tf_plan_only` - Terraform plan (safe, no apply)
+- `orientation` - Orient to codebase structure
+- `documentation` - Create/update documentation
+- `gh_issue_create`, `gh_pr_merge`, `gh_pr_view` - GitHub workflows
+- `rebase`, `pull_main` - Git operations
+- `iac`, `infra_change_review` - Infrastructure workflows
+- `stability_checks` - Run sanity/stability checks
 
 ### 2. Agents (`agents/`)
 
 **Type**: Markdown files with role definitions
 **Location**: `~/.claude/agents/*.md`
-**Selection**: User chooses agent or agent is invoked by slash command
+**Selection**: User chooses agent or agent is invoked by skill
+
+**Available Agents**:
+- `pe` - Production Engineering (infra/cloud/terraform)
+- `swe` - Software Engineering (implementation)
+- `doc` - Documentation
 
 ```
 User selects "pe" agent
@@ -186,42 +188,25 @@ Output: {"continue": false, "stopReason": "Requires approval"}
 Result: Tool call blocked, user sees approval message
 ```
 
-### 4. Skills (`skills/`)
+### 4. Skill Invocation
 
-**Type**: Markdown documentation files
-**Location**: `~/.claude/skills/*.md`
-**Reference**: Agents read these for workflow guidance
+Skills can be invoked in multiple ways:
 
-```
-Agent needs: Terraform plan workflow
-  │
-  ▼
-Reference: skills/tf_plan_only.md
-  │
-  ▼
-Follow: Steps, tooling, and safety guidance documented
-  │
-  ▼
-Execute: Workflow as documented in skill
-```
-
-**Responsibilities**:
-- Document reusable workflows and patterns
-- Provide step-by-step procedures
-- List required tools and dependencies
-- Define safety considerations
+1. **Natural language**: "Use the ship_with_review skill to implement issue #123"
+2. **Skill tool**: The Skill tool can directly invoke skills
+3. **Agent reference**: Agents reference skills for workflow guidance
 
 **Example Flow**:
 ```
-Agent: pe executing terraform plan
+User: "Use tf_plan_only for ./infra"
     ↓
-Reference: skills/tf_plan_only.md
+Load: skills/tf_plan_only.md
     ↓
-Read: Steps, tooling, safety guidelines
+Agent follows documented steps
     ↓
-Follow: 1. Init, 2. Select workspace, 3. Run plan, 4. Summarize
+Execute: 1. Init, 2. Select workspace, 3. Run plan, 4. Summarize
     ↓
-Execute: Each step with documented best practices
+Return: Plan output and summary to user
 ```
 
 ### 5. Bin Scripts (`bin/`)
@@ -266,15 +251,14 @@ Return: PR summary and diff to caller
 
 ## Data Flow Examples
 
-### Example 1: User Runs `/pe-plan`
+### Example 1: User Invokes tf_plan_only Skill
 
 ```
-1. User types: /pe-plan DIR=./infra WORKSPACE=staging
+1. User types: "Use tf_plan_only for ./infra workspace staging"
 
 2. Claude Code:
-   - Loads commands/pe-plan.md
-   - Replaces $ARGUMENTS with "DIR=./infra WORKSPACE=staging"
-   - Invokes agent "pe" with expanded prompt
+   - Loads skills/tf_plan_only.md
+   - Agent follows documented workflow
 
 3. Agent (pe):
    - Reads agents/pe.md for context
@@ -331,35 +315,36 @@ Return: PR summary and diff to caller
    - Sees: "terraform apply requires explicit approval"
    - Can choose to:
      a) Grant explicit approval
-     b) Use /pe-apply (confirm-first workflow)
-     c) Cancel operation
+     b) Cancel operation
 ```
 
 ### Example 3: Agent Uses Skill Documentation
 
 ```
-1. User selects: Agent "tl" (Team Lead)
+1. User: "Use ship_with_review to implement issue #123"
 
-2. Task: Triage open issues
+2. Task: End-to-end issue implementation
 
-3. Agent (tl):
-   - Loads agents/tl.md for role context
-   - References skills/gh_issue_triage.md for triage procedure
+3. Agent (swe):
+   - Loads agents/swe.md for role context
+   - References skills/ship_with_review.md for workflow
    - Reads documented steps:
-     1. Fetch open issues
-     2. Categorize by type
-     3. Assess priority
-     4. Map dependencies
+     1. Read GitHub issue
+     2. Create feature branch in worktree
+     3. Implement solution
+     4. Create PR and trigger review
+     5. Iterate on feedback
+     6. Merge when approved
 
 4. Agent follows steps:
-   - Executes: gh issue list (via gh CLI)
-   - Categorizes: bug, feature, tech-debt, question
-   - Assesses: impact, effort, blockers
-   - Maps dependencies between issues
+   - Fetches issue details via gh CLI
+   - Creates worktree and implements
+   - Creates PR, triggers Codex review
+   - Iterates on NEEDS_WORK feedback
 
 5. Agent references:
-   - skills/gh_issue_triage.md for triage workflow
-   - skills/context_scoper.md to scope relevant files
+   - skills/ship_with_review.md for workflow
+   - skills/gh_pr_merge.md for merge procedure
    - CLAUDE.md for autonomy policies
 ```
 
@@ -370,21 +355,19 @@ Return: PR summary and diff to caller
 ├── settings.json                       # Hook config, permissions
 ├── settings.local.json                 # Machine-specific overrides
 │
-├── commands/                           # Slash commands
-│   ├── pe-plan.md                      # /pe-plan
+├── skills/                             # Workflow documentation (primary)
+│   ├── ship_with_review.md             # Signature workflow
+│   ├── tf_plan_only.md                 # Terraform workflow
 │   └── ...
+│
+├── agents/                             # Agent definitions
+│   ├── pe.md                           # Production Engineering
+│   ├── swe.md                          # Software Engineering
+│   └── doc.md                          # Documentation
 │
 ├── hooks/                              # Executable hooks
 │   ├── pre_safety_check.sh             # Safety guardrails
 │   └── post_telemetry.sh               # Telemetry logging
-│
-├── agents/                             # Agent definitions
-│   ├── pe.md                           # Production Engineering
-│   └── ...
-│
-├── skills/                             # Workflow documentation
-│   ├── tf_plan_only.md                 # Terraform workflow
-│   └── ...
 │
 └── bin/                                # Utility scripts
     ├── gh-pr-review                    # PR review helper
@@ -394,7 +377,7 @@ OR
 
 .claude/                                # Project-specific config
 ├── settings.json                       # Project overrides
-├── commands/                           # Project-specific commands
+├── skills/                             # Project-specific skills
 └── ...                                 # (same structure as global)
 ```
 
@@ -457,11 +440,10 @@ OR
 
 | Component | Can Invoke | Can Reference | Can Modify | Invoked By |
 |-----------|-----------|---------------|------------|------------|
-| Slash Command | Agents | Skills, Agents | Tool Calls | User |
-| Agent | Tools, Bin Scripts | Skills, CLAUDE.md | Hooks (indirectly) | User, Slash Command |
+| Skill | Agents | Other Skills | Tool Calls | User, Skill tool |
+| Agent | Tools, Bin Scripts | Skills, CLAUDE.md | Hooks (indirectly) | User, Skill |
 | Hook | N/A | N/A | Tool Inputs | Tool Calls (automatic) |
-| Skill | N/A | N/A | N/A | Agent (read-only) |
-| Bin Script | CLI Tools | N/A | N/A | Agent, User, Slash Command |
+| Bin Script | CLI Tools | N/A | N/A | Agent, User |
 
 ## Security & Safety Layers
 
@@ -497,15 +479,13 @@ Result to User
 
 ## Summary
 
-- **Slash Commands**: Custom prompts invoked by `/command-name`
+- **Skills**: Reusable workflow documentation (primary interface)
 - **Agents**: Role-specific system context and behavior
 - **Hooks**: Executable scripts for validation and telemetry
-- **Skills**: Documentation for reusable workflows
 - **Bin Scripts**: Utility scripts for complex operations
 
 **Key Principle**: Separation of concerns
-- Commands define **what** to do (prompts)
+- Skills define **what** to do and **how** to do it (workflows)
 - Agents define **who** does it (roles)
 - Hooks define **safety** (guardrails)
-- Skills define **how** to do it (workflows)
 - Bin scripts **encapsulate** complex operations

@@ -33,17 +33,23 @@ Use the ship_with_review skill to implement and merge issue #123
 
 The agent handles implementation, review iteration, CI fixes, and merge.
 
-## Commands
+## Available Skills
 
-| Command | Use Case |
-|---------|----------|
-| `/tl triage` | Triage and prioritize open issues |
-| `/tl ticket TYPE='bug' DESC='...'` | Create a GitHub issue |
-| `/pe plan DIR=./infra` | Terraform plan (safe, autonomous) |
-| `/pe apply DIR=./infra` | Terraform apply (requires approval) |
-| `/test-health` | Test health report |
-| `/dbg "error"` | Debug with scoped analysis |
-| `/arch plan FEATURE="..."` | Architecture planning |
+| Skill | Use Case |
+|-------|----------|
+| `ship_with_review` | End-to-end issue-to-merge workflow |
+| `orientation` | Orient to codebase and project structure |
+| `tf_plan_only` | Terraform plan (safe, no apply) |
+| `gh_issue_create` | Create a GitHub issue |
+| `rebase` | Rebase current branch on main |
+
+## Available Agents
+
+| Agent | Use Case |
+|-------|----------|
+| `pe` | Production Engineering - infra/terraform tasks |
+| `swe` | Software Engineering - implementation |
+| `doc` | Documentation tasks |
 
 ## Safety Cues
 
