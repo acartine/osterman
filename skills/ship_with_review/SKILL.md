@@ -1,6 +1,7 @@
-## Metadata
+---
 name: ship_with_review
-description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop.  Use when user invokes explicitly, or any request to address a github issue.
+description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop. Use when user invokes explicitly, or any request to address a github issue.
+---
 
 # Ship With Review Skill
 
