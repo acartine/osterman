@@ -61,6 +61,7 @@
       "Bash(zip:*)",
       "Read",
       "Fetch",
+      "WebFetch"
       "Grep",
       "Glob",
       "Edit",
