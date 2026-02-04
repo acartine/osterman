@@ -65,6 +65,38 @@ case "$TOOL_NAME" in
       fi
     fi
 
+    # Git push to main/master - block
+    if [[ "$COMMAND" =~ git[[:space:]]+(push|push[[:space:]]) ]]; then
+      # Block if command explicitly targets main/master remote branch
+      if [[ "$COMMAND" =~ (origin|upstream)[[:space:]]+(main|master) ]]; then
+        block_operation "Pushing to main/master is prohibited. Create a feature branch first: git checkout -b <branch-name>"
+      fi
+      # Block if currently on main/master (implicit push)
+      CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+      if [[ "$CURRENT_BRANCH" == "main" || "$CURRENT_BRANCH" == "master" ]]; then
+        block_operation "You are on '$CURRENT_BRANCH'. Pushing directly to main/master is prohibited. Create a feature branch first: git checkout -b <branch-name>"
+      fi
+    fi
+
+    ;;
+  "mcp__shemcp__shell_exec")
+    CMD=$(echo "$TOOL_INPUT" | jq -r '.cmd // ""')
+    ARGS=$(echo "$TOOL_INPUT" | jq -r '(.args // []) | join(" ")')
+    FULL_CMD="$CMD $ARGS"
+
+    # Git push to main/master - block
+    if [[ "$CMD" == "git" ]] && [[ "$ARGS" =~ ^push ]]; then
+      # Block if args explicitly target main/master remote branch
+      if [[ "$ARGS" =~ (origin|upstream)[[:space:]]+(main|master) ]]; then
+        block_operation "Pushing to main/master is prohibited. Create a feature branch first: git checkout -b <branch-name>"
+      fi
+      # Block if currently on main/master (implicit push)
+      CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+      if [[ "$CURRENT_BRANCH" == "main" || "$CURRENT_BRANCH" == "master" ]]; then
+        block_operation "You are on '$CURRENT_BRANCH'. Pushing directly to main/master is prohibited. Create a feature branch first: git checkout -b <branch-name>"
+      fi
+    fi
+
     ;;
 esac
 

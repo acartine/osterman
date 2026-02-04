@@ -49,6 +49,15 @@
           }
         ],
         "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/pre_safety_check.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "mcp__shemcp__shell_exec"
       }
     ],
     "SessionStart": [
