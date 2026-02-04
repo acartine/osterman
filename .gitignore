@@ -23,6 +23,7 @@ plans/
 shell-snapshots/
 stats-cache.json
 statsig/
+tasks/
 telemetry/
 todos/
 osterman/
