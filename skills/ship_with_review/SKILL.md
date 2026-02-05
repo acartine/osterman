@@ -1,14 +1,13 @@
 ---
 name: ship_with_review
-description: End-to-end workflow from GitHub issue to merged PR with automated third-party review loop. Use when user invokes explicitly, or any request to address a github issue.
+description: End-to-end workflow from an issue (Beads or GitHub) to merged PR with automated third-party review loop. Use when user invokes explicitly, or any request to address an issue.
 ---
 
 # Ship With Review Skill
 
 ## Overview
 
-Complete workflow that takes a GitHub issue from start to merged PR, including an automated third-party code review loop. Handles iteration when review requests changes or CI fails.
-
+Complete workflow that takes an issue (from Beads or GitHub) from start to merged PR, including an automated third-party code review loop. Handles iteration when review requests changes or CI fails.
 
 Traditional AI-assisted development suffers from **operator thrashing**—the human becomes a bottleneck, repeatedly reviewing code and requesting changes. This defeats the purpose of autonomous agents.
 
@@ -38,20 +37,26 @@ The `ship_with_review` skill solves this by delegating code review to a third-pa
 - Increasing function and file sizes beyond limits is ok IF the increase was simply to reference your new code.
 
 ## Inputs
-A Github Issue Id for the repo
+A **beads-id** (primary) or a **GitHub Issue Id** for the repository.
 
 ## Instructions
 Follow this as closely as you can.
 ### Phase 1: Issue Analysis
 
 #### Pre-conditions
-- Valid issue number provided
+- Valid issue identifier (beads or GH) provided
 - Repository is accessible
 
 #### Steps
 ```bash
-# Fetch issue details
-gh issue view <issue> --repo <repo> --json title,body,labels,assignees,milestone
+# IF using Beads: Mark as in-progress (Primary)
+bd start <issue-id>
+
+# Fetch issue details from Beads
+bd show <issue-id>
+
+# OR if using GitHub (Secondary)
+gh issue view <issue-id> --repo <repo> --json title,body,labels,assignees,milestone
 
 ASSERT: Issue exists and is open (or has actionable state)
 
@@ -79,8 +84,8 @@ ASSERT: Issue exists and is open (or has actionable state)
 3. **Check if issue already has an associated PR:**
 
 ```bash
-# Find PRs that reference this issue
-gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merged
+# Find PRs that reference this issue (searching by beads-id or issue-id)
+gh pr list --repo <repo> --search "<issue-id>" --json number,headRefName,state,merged
 ```
 
 **Decision tree:**
@@ -90,7 +95,7 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
    │
    ├─► NO existing PR
    │   └─► 3a) Create worktree for new feature branch:
-   │            git worktree add ../repo-issue-<issue> -b issue-<issue>
+   │            git worktree add ../repo-issue-<issue-id> -b issue-<issue-id>
    │            → Continue to step 4
    │
    └─► YES existing PR
@@ -100,7 +105,7 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
            ├─► NO (PR is open or closed-not-merged)
            │   └─► 3b1) Create worktree from existing PR branch:
            │              git fetch origin <pr-branch>
-           │              git worktree add ../repo-issue-<issue> <pr-branch>
+           │              git worktree add ../repo-issue-<issue-id> <pr-branch>
            │              → Continue to step 4 (taking existing code into account)
            │
            └─► YES (PR is merged)
@@ -110,12 +115,15 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
                    │
                    ├─► NO (issue not fully resolved)
                    │   └─► 3b2a) Create worktree for new feature branch:
-                   │              git worktree add ../repo-issue-<issue> -b issue-<issue>-followup
+                   │              git worktree add ../repo-issue-<issue-id> -b issue-<issue-id>-followup
                    │              → Continue to step 4
                    │
                    └─► YES (issue is resolved)
                        └─► 3b2b) Close the issue and EXIT workflow:
-                                gh issue close <issue> --repo <repo> --comment "Resolved by merged PR #<pr>"
+                                # Close in Beads
+                                bd close <issue-id>
+                                # AND/OR close in GitHub
+                                gh issue close <issue-id> --repo <repo> --comment "Resolved by merged PR #<pr>"
                                 → WORKFLOW COMPLETE (skip remaining phases)
 ```
 
@@ -150,8 +158,8 @@ gh pr list --repo <repo> --search "<issue>" --json number,headRefName,state,merg
 
 **If new branch (cases 3a, 3b2a):**
 ```bash
-# Create draft PR linked to issue
-gh pr create --draft --title "<title>" --body "Closes #<issue>
+# Create draft PR linked to issue (using beads-id or GH issue-id in title/body)
+gh pr create --draft --title "Fix <issue-id>: <title>" --body "Closes #<issue-id>
 
 ## Summary
 <implementation summary>
@@ -193,7 +201,7 @@ gh pr edit <pr_number> --body "Updated implementation...
 ```bash
 # Run codex review from the worktree directory
 codex exec -c model_reasoning_summary="none" -c model_verbosity="low" -c hide_agent_reasoning=true \
-  "review this branch against main and format your response as JSON with a status field that says one of the following: NEEDS_WORK, APPROVED" \
+  "review this branch against main for BUGS and PERFORMANCE - do not suggest fallbacks or backwards compatibility.  Format your response as JSON with a status field that says one of the following: NEEDS_WORK, APPROVED" \
   2>/dev/null
 ```
 
@@ -339,6 +347,13 @@ ASSERT: PR state is now "MERGED"
 #### Post-conditions
 - PR has been merged to main
 - Remote branch has been deleted
+- Issue closed in trackers:
+    ```bash
+    # If beads:
+    bd close <issue-id>
+    # If github:
+    gh issue close <issue-id>
+    ```
 
 ### Phase 7: Cleanup
 
@@ -360,7 +375,7 @@ git pull origin main
 ASSERT: Local main branch is up-to-date with merged changes
 
 # Remove worktree
-git worktree remove ../repo-issue-<issue>
+git worktree remove ../repo-issue-<issue-id>
 
 ASSERT: Worktree directory no longer exists
 ```
@@ -374,7 +389,14 @@ ASSERT: Worktree directory no longer exists
 
 ```
 ┌─────────────────┐
+│  Mark In-Prog   │
+│  (Beads Only)   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
 │  Read Issue     │
+│ (Beads/GitHub)  │
 └────────┬────────┘
          │
          ▼
@@ -411,11 +433,11 @@ ASSERT: Worktree directory no longer exists
     │       │      NO          YES
     │       │       │           │
     │       │       ▼           ▼
-    │       │  ┌─────────┐  ┌─────────────┐
-    │       │  │ Create  │  │ Close Issue │
-    │       │  │ Followup│  │ EXIT        │
-    │       │  │ Branch  │  └─────────────┘
-    │       │  └────┬────┘
+    │       │  ┌─────────┐  ┌───────────────┐
+    │       │  │ Create  │  │ Close Issue   │
+    │       │  │ Followup│  │ (Beads/GitHub)│
+    │       │  │ Branch  │  │ EXIT          │
+    │       │  └────┬────┘  └───────────────┘
     │       │       │
     └───────┴───────┘
             │
@@ -497,10 +519,13 @@ If PR becomes unmergeable:
 ## Example Invocation
 
 ```
-# Ask the agent to use the skill
-"Ship issue #42 using the ship_with_review skill"
+# Primary: Beads
+"Ship xyz using the ship_with_review skill"
 
-# Or reference directly
+# Secondary: GitHub
+"Ship github issue #42 using the ship_with_review skill"
+
+# Generic
 "Use ship_with_review to implement and merge issue #42"
 ```
 

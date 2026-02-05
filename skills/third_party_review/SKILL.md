@@ -47,7 +47,7 @@ Run codex review from the worktree/branch directory:
 
 ```bash
 codex exec -c model_reasoning_summary="none" -c model_verbosity="low" -c hide_agent_reasoning=true \
-  "review this branch against main and format your response as JSON with a status field that says one of the following: NEEDS_WORK, APPROVED" \
+  "review this branch against main for BUGS and PERFORMANCE - do not suggest fallbacks or backwards compatibility.  Format your response as JSON with a status field that says one of the following: NEEDS_WORK, APPROVED" \
   2>/dev/null
 ```
 
