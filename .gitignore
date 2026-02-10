@@ -46,3 +46,5 @@ __pycache__/
 # Terraform backups (if any local testing)
 .terraform/
 *.tfstate*
+teams
+usage-data/
