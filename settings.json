@@ -1,76 +1,6 @@
 {
-  "alwaysThinkingEnabled": true,
-  "comment": "Settings for Iteration 4 - With safety hook and telemetry",
-  "enabledPlugins": {},
   "env": {
     "CLAUDE_TELEMETRY": "1"
-  },
-  "hooks": {
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "command": "~/.claude/hooks/permission-handler.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "~/.claude/hooks/post_telemetry.sh",
-            "timeout": 5000,
-            "type": "command"
-          }
-        ],
-        "matcher": "*"
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "command": "bd prime",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "~/.claude/hooks/pre_safety_check.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.claude/hooks/pre_safety_check.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "mcp__shemcp__shell_exec"
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "bd prime",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ]
   },
   "permissions": {
     "allow": [
@@ -144,5 +74,75 @@
     ],
     "ask": [],
     "defaultMode": "plan"
-  }
+  },
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/permission-handler.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/post_telemetry.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bd prime"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre_safety_check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__shemcp__shell_exec",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre_safety_check.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bd prime"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {},
+  "alwaysThinkingEnabled": true,
+  "comment": "Settings for Iteration 4 - With safety hook and telemetry"
 }
