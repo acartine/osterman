@@ -19,13 +19,6 @@ wherever possible use the shemcp:shell_exec() (the mcp tool, if installed) for b
 - cd
 - mkdir
 
-## Branch Protection
-- **NEVER push directly to `main` or `master`** — this applies to ALL agents, subagents, and beads tasks
-- Always create a feature branch (`git checkout -b <branch>`) before committing work
-- The Session Close Protocol's `git push` step means push your **feature branch**, not main
-- Pushes to main/master are blocked by PreToolUse hooks; if you hit the block, create a branch first
-- Use `gh pr create` to open a PR back to main after pushing your feature branch
-
 ## Best Practices
 - Prefer using build file targets (make/task/just) to running ad-hoc commands
 - leverage existing targets where it makes sense.  e.g. if you are adding a test, add it in a way that an existing target will pick it up
@@ -79,4 +72,3 @@ For each unit of work (feature request, bugfix) prompted by the Operator, exerci
 - Centralize shared procedures in skills and hooks; agents should reference them rather than inline.
 - Use progressive disclosure: start with summaries and expand on demand.
 - Reuse existing build/test targets; avoid verbose command listings.
-
