@@ -69,6 +69,7 @@
       "WebSearch",
       "Skill(ship_with_review:*)",
       "mcp__chrome-devtools__*",
+      "mcp__playwright__*",
       "mcp__shemcp__*",
       "Task(*)"
     ],
