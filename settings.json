@@ -4,6 +4,13 @@
   },
   "permissions": {
     "allow": [
+      "Bash(bun:*)",
+      "Bash(cargo:*)",
+      "Bash(clippy:*)",
+      "Bash(rustc:*)",
+      "Bash(rustfmt:*)",
+      "Bash(rustup:*)",
+      "Bash(rs:*)",
       "Bash(awk:*)",
       "Bash(aws:*)",
       "Bash(az:*)",
@@ -74,20 +81,9 @@
       "Task(*)"
     ],
     "ask": [],
-    "defaultMode": "plan"
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
-    "PermissionRequest": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/permission-handler.sh"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "*",

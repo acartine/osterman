@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +e
 
 # PostToolUse hook for operation telemetry
 # Logs tool usage for analysis and audit

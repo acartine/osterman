@@ -1,37 +1,23 @@
 # Repository Guidelines
 
 ## Tooling
-wherever possible use the shemcp:shell_exec() (the mcp tool, if installed) for bash commands, especially:
-- aws
-- az
-- grep
-- sed
-- tail
-- head
-- timeout
-- npm
-- npx
-- task
-- make
-- test
-- openssl
-- sleep
-- cd
-- mkdir
+Wherever possible use the shemcp:shell_exec() (the MCP tool, if installed) for bash commands, especially:
+- aws, az, kubectl, terraform
+- grep, sed, tail, head, timeout
+- npm, npx, task, make, just, test
+- openssl, sleep, cd, mkdir
 
 ## Best Practices
-- Prefer using build file targets (make/task/just) to running ad-hoc commands
-- leverage existing targets where it makes sense.  e.g. if you are adding a test, add it in a way that an existing target will pick it up
-- if no target exists, consider creating a new target.  this enables discovery and reuse for other users.
+- **Prefer using build file targets** (make/task/just) to running ad-hoc commands
+- Leverage existing targets where it makes sense. E.g., if you are adding a test, add it in a way that an existing target will pick it up
+- If no target exists, consider creating a new target. This enables discovery and reuse for other users.
 
 ## Agent Development Flow
 **NOTE: If you cannot find a command, make sure you look in the User level settings before you decide the command is not there.**
 
-**NOTE: For each unit of work (feature request, bugfix, etc.), you should almost always default to the ship_with_review skill.  If no Github issue exists for you work, simply omit steps that ask you to do stuff with the Github Issue.  The only exception is if the Operator explicitly tells you to do something different.**
-
-For each unit of work (feature request, bugfix) prompted by the Operator, exercise the general flow of work as closely to the ship_with_review skill as possible.  Some extra suggestions include: 
+For each unit of work (feature request, bugfix) prompted by the Operator, follow repository-local AGENTS.md instructions first. If repository policy forbids PR/review workflows, skip PR/review-specific steps unless the Operator explicitly asks for them. Some extra suggestions include:
 1. Add small, simple tests to verify results. For terraform changes, execute the make targets for terraform plan and review them.
-1. For non infra changes, look in ./PROJECT.md for sanity/stability commands to run when you think your changes satisfy the requirements and the tests have been augmented to support your changes.  If your tests are failing, fix the code or test (whichever is wrong in light of the requirements).  If the test is wrong and super complicated, simplify it and clarify caveats in the test code and the PR.
+1. For non-infra changes, look in ./PROJECT.md for sanity/stability commands to run when you think your changes satisfy the requirements and the tests have been augmented to support your changes. If your tests are failing, fix the code or test (whichever is wrong in light of the requirements). If the test is wrong and super complicated, simplify it and clarify caveats in the test code and the PR.
 1. Before committing, verify your specific change works by directly executing the component you modified (run the script you fixed, execute the make/task target you changed, start the app to test config changes, etc.). Do NOT just run a test suite unless it specifically exercises your change. You must produce observable evidence that your change works. Only after successful verification, commit your changes and push to remote.
 1. Use the gh tool to inspect branch builds and verify green workflows. Inspect the logs if necessary, especially for infra changes.
 
@@ -44,6 +30,7 @@ For each unit of work (feature request, bugfix) prompted by the Operator, exerci
 
 ## Project Specific Guidelines
 - Read ./PROJECT.md and treat those guidelines as an appendix to these.
+- Check for local .claude/CLAUDE.md or CLAUDE.md for project-specific rules.
 
 ## Autonomy Policy
 - Default: Domain agents operate autonomously for routine work in their scope.
