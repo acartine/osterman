@@ -1,61 +1,34 @@
-# Repository Guidelines
+# User-Level Guidelines
+
+These are defaults. **Project-level CLAUDE.md and AGENTS.md override these.**
 
 ## Tooling
-Wherever possible use the shemcp:shell_exec() (the MCP tool, if installed) for bash commands, especially:
-- aws, az, kubectl, terraform
-- grep, sed, tail, head, timeout
-- npm, npx, task, make, just, test
-- openssl, sleep, cd, mkdir
+- Use `shemcp:shell_exec()` (MCP tool, if installed) for shell commands
+- **Prefer build targets** (make/task/just) over ad-hoc commands
+- Leverage existing targets; create new ones when none exist
 
-## Best Practices
-- **Prefer using build file targets** (make/task/just) to running ad-hoc commands
-- Leverage existing targets where it makes sense. E.g., if you are adding a test, add it in a way that an existing target will pick it up
-- If no target exists, consider creating a new target. This enables discovery and reuse for other users.
+## Development Flow
+1. Follow repo-local AGENTS.md/PROJECT.md first — they define git workflow (PR vs direct push), test strategy, and CI expectations
+2. Add small tests to verify changes. For terraform, run plan targets and review output.
+3. Before committing, **directly verify your change works** (run the script, execute the target, start the app). Do not rely solely on a test suite. Produce observable evidence.
+4. Use `gh` to check branch builds are green, especially for infra changes.
 
-## Agent Development Flow
-**NOTE: If you cannot find a command, make sure you look in the User level settings before you decide the command is not there.**
-
-For each unit of work (feature request, bugfix) prompted by the Operator, follow repository-local AGENTS.md instructions first. If repository policy forbids PR/review workflows, skip PR/review-specific steps unless the Operator explicitly asks for them. Some extra suggestions include:
-1. Add small, simple tests to verify results. For terraform changes, execute the make targets for terraform plan and review them.
-1. For non-infra changes, look in ./PROJECT.md for sanity/stability commands to run when you think your changes satisfy the requirements and the tests have been augmented to support your changes. If your tests are failing, fix the code or test (whichever is wrong in light of the requirements). If the test is wrong and super complicated, simplify it and clarify caveats in the test code and the PR.
-1. Before committing, verify your specific change works by directly executing the component you modified (run the script you fixed, execute the make/task target you changed, start the app to test config changes, etc.). Do NOT just run a test suite unless it specifically exercises your change. You must produce observable evidence that your change works. Only after successful verification, commit your changes and push to remote.
-1. Use the gh tool to inspect branch builds and verify green workflows. Inspect the logs if necessary, especially for infra changes.
-
-## Commit & Pull Request Guidelines
-- Commits: Use clear, imperative titles (≤72 chars). Scope when helpful (e.g., "frontend: fix login redirect").
-- PRs: Include purpose, linked issues, and screenshots/GIFs for UI. Ensure lints/compiles/tests are green. For Terraform PRs, attach the plan output.
-
-## Security & Configuration Tips
+## Commits
+- Clear, imperative titles (≤72 chars). Scope when helpful (e.g., "frontend: fix login redirect").
 - Never commit secrets.
 
-## Project Specific Guidelines
-- Read ./PROJECT.md and treat those guidelines as an appendix to these.
-- Check for local .claude/CLAUDE.md or CLAUDE.md for project-specific rules.
-
 ## Autonomy Policy
-- Default: Domain agents operate autonomously for routine work in their scope.
-- Always require explicit approval before:
-  - `terraform apply`, `kubectl apply/delete` against non-kind contexts
-  - Production database schema/data changes and migrations
-  - Secret/key rotations, IAM role policy changes, or token scope expansion
-  - DNS, TLS/SSL certificate, CDN, or WAF changes
-  - Destructive operations (delete/purge/backfill) and irreversible data tasks
-  - Any change likely to incur material cloud costs (scale-ups, new managed services)
-- Pause autonomy and request approval when:
-  - CI is red or PR checks fail
-  - Permissions are insufficient for an intended action
-  - Risk exceeds guardrails in `docs/RISK_REGISTER.md`
+Operate autonomously for routine work. **Require explicit approval before:**
+- `terraform apply`, `kubectl apply/delete` against non-kind contexts
+- Production database schema/data changes and migrations
+- Secret/key rotations, IAM policy changes, token scope expansion
+- DNS, TLS/SSL, CDN, or WAF changes
+- Destructive or irreversible operations (delete/purge/backfill)
+- Changes likely to incur material cloud costs
 
-## Safety Guardrails
-- Use plan/dry-run first for all infra: `terraform plan`, `kubectl diff`, `helm template`, `gh pr status`.
-- For Terraform, produce and summarize a plan; do not apply without approval.
-- Prefer non-destructive, incremental changes; propose rollbacks before executing.
-- Never commit or log secrets; prefer env vars and vaults.
-- When uncertain, escalate to the Pair Programming agent (non-autonomous).
+**Pause and ask when:** CI is red, permissions are insufficient, or risk feels unclear.
 
-## Token Usage Policy
-- Prefer scoped context: use `rg` to locate relevant files, include minimal snippets.
-- Summarize large diffs/files; avoid pasting full content unless explicitly requested.
-- Centralize shared procedures in skills and hooks; agents should reference them rather than inline.
-- Use progressive disclosure: start with summaries and expand on demand.
-- Reuse existing build/test targets; avoid verbose command listings.
+## Safety
+- Plan/dry-run first for all infra: `terraform plan`, `kubectl diff`, `helm template`
+- Prefer non-destructive, incremental changes; propose rollbacks before executing
+- Never commit or log secrets; prefer env vars and vaults
