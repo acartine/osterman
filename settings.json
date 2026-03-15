@@ -14,7 +14,6 @@
       "Bash(awk:*)",
       "Bash(aws:*)",
       "Bash(az:*)",
-      "Bash(bd:*)",
       "Bash(cat:*)",
       "Bash(cd:*)",
       "Bash(chmod:*)",
@@ -96,17 +95,7 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bd prime"
-          }
-        ]
-      }
-    ],
+    "PreCompact": [],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -127,19 +116,11 @@
         ]
       }
     ],
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bd prime"
-          }
-        ]
-      }
-    ]
+    "SessionStart": []
   },
   "enabledPlugins": {},
   "alwaysThinkingEnabled": true,
-  "comment": "Settings for Iteration 4 - With safety hook and telemetry"
+  "effortLevel": "medium",
+  "comment": "Settings for Iteration 4 - With safety hook and telemetry",
+  "voiceEnabled": true
 }

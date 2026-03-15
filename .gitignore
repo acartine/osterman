@@ -50,3 +50,4 @@ teams
 usage-data/
 mcp-needs-auth-cache.json
 backups
+sessions
