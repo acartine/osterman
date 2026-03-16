@@ -31,7 +31,7 @@ osterman/
 telemetry.jsonl
 *.backup
 *.backup-*
-
+.credentials.json
 
 # Node/JS (if used in bin tooling)
 node_modules/
