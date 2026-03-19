@@ -121,6 +121,14 @@
   "enabledPlugins": {},
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
+  "voiceEnabled": true,
   "comment": "Settings for Iteration 4 - With safety hook and telemetry",
-  "voiceEnabled": true
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  }
 }
