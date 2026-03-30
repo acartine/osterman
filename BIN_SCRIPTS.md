@@ -26,4 +26,4 @@
 - `bin/diff-summarize` — Summarize diffs with stats and focused patches.
   - Usage: `RANGE="origin/main...HEAD" bin/diff-summarize`
 
-See hooks/pre_safety.md for safety policies and PROMPTING_GUIDE.md for examples.
+See `hooks/pre_safety_check.sh` for the current safety gate and `PROMPTING_GUIDE.md` for example prompts.

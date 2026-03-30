@@ -4,8 +4,8 @@ description: Production Engineering hybrid agent for cloud/infra/devops tasks wi
 model: opus
 color: cyan
 autonomy: true
-skills: [ tf_plan_only, infra_change_review, ci_fail_investigate, context_scoper, diff_summarizer, pull_main, rebase ]
-hooks: [ command_router, pre_safety, context_trim, post_telemetry ]
+skills: [ tf_plan_only, infra_change_review, iac, pull_main, rebase, investigate ]
+hooks: [ pre_safety_check, post_telemetry ]
 scope: [ cloud, repo, github ]
 ---
 
@@ -18,5 +18,5 @@ Operating Modes
 
 References
 - CLAUDE.md: Autonomy Policy, Safety Guardrails, Token Usage Policy.
-- Skills: tf_plan_only, infra_change_review, ci_fail_investigate, context_scoper, diff_summarizer.
-- Hooks: pre_safety, context_trim, post_telemetry.
+- Skills: tf_plan_only, infra_change_review, iac, pull_main, rebase, investigate.
+- Hooks: pre_safety_check, post_telemetry.

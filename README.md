@@ -1,121 +1,97 @@
 # Osterman Claude Configuration
 
-Production-ready Claude Code configuration for autonomous software development workflows.
+Pragmatic Claude Code/Codex configuration for software and infrastructure work.
 
-## What is this?
+## What This Repo Actually Contains
 
-The `osterman` .claude configuration provides autonomous agent workflows for professional software development. It implements a secure, efficient approach to taking GitHub issues from triage to merged PR using Claude Code CLI.
+This repository ships a small set of reusable building blocks:
 
-## Why is it called `osterman`?
+- `AGENTS.md` and `CLAUDE.md` for global working rules
+- `agents/` for role prompts
+- `skills/` for task-specific guidance
+- `hooks/` for safety and telemetry
+- `bin/` for helper scripts
+- `settings.json` for Claude hook and permission configuration
 
-Before he was Dr. Manhattan, he was Jon Osterman. We hope someday to be Dr. Manhattan.
+It does not currently ship a built-in end-to-end `ship_with_review` workflow.
 
-## The Signature Workflow: Ship With Review
+## Included Agents
 
-The crown jewel of osterman is the **`ship_with_review` skill**—an end-to-end autonomous workflow that takes a GitHub issue from triage to merged PR with minimal operator intervention.
+- `pe` for production engineering and infra-oriented work
+- `swe` for implementation work
+- `doc` for documentation updates
 
-### The Problem: Operator Thrashing
+## Included Skills
 
-Traditional AI-assisted development creates a frustrating loop:
-1. Agent implements code
-2. Operator reviews and requests changes
-3. Agent makes changes
-4. Operator reviews again...
-5. Repeat until operator is exhausted
+- `orientation`
+- `documentation`
+- `investigate`
+- `pull_main`
+- `rebase`
+- `stability_checks`
+- `tf_plan_only`
+- `iac`
+- `infra_change_review`
+- `map-repo`
+- `enforce-sourcecode-size`
 
-This "thrashing" defeats the purpose of autonomous agents—the human becomes the bottleneck.
+Each skill lives under `skills/<name>/SKILL.md`.
 
-### The Solution: The Ralph Wiggum Loop
+## Included Hooks
 
-Osterman solves this with **delegated third-party review**. Instead of the operator reviewing code, we delegate review to another AI agent (Codex). The workflow:
+- `hooks/pre_safety_check.sh` blocks or gates risky operations
+- `hooks/post_telemetry.sh` writes telemetry when `CLAUDE_TELEMETRY=1`
 
+## Included Helper Scripts
+
+The `bin/` directory contains helpers for common GitHub and Terraform tasks, including:
+
+- `gh-issue-triage`
+- `gh-dependency-detect`
+- `gh-pr-review`
+- `gh-pr-merge`
+- `tf-plan-only`
+- `ci-fail-investigate`
+- `test-health-report`
+- `context-scope`
+- `diff-summarize`
+
+See `BIN_SCRIPTS.md` for details.
+
+## How To Use It
+
+Use the agents when you want broad role guidance:
+
+```text
+Use the swe agent to implement issue #123. Start with pull_main and stability_checks, then make the smallest safe change.
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Implement  │────►│ Codex       │────►│ APPROVED?   │
-│  Solution   │     │ Review      │     │             │
-└─────────────┘     └─────────────┘     └──────┬──────┘
-       ▲                                       │
-       │            NEEDS_WORK                 │
-       └───────────────────────────────────────┘
+
+Use the skills when you want a specific workflow:
+
+```text
+Use tf_plan_only for ./infra in the staging workspace and summarize the risk.
 ```
 
-We call this the **"Ralph Wiggum Loop"**—after enough automated review cycles, even Ralph could approve it. The agent iterates autonomously until the code passes muster, then proceeds to CI verification and merge.
-
-**Benefits:**
-- **No operator thrashing**: Kick off the workflow and check back when it's done
-- **Consistent review quality**: Every PR gets the same thorough review
-- **Faster iteration**: Agent can address feedback immediately without waiting for human availability
-- **Operator as escalation path**: Humans only intervene when the automation hits its limits (max iterations, timeouts)
-
-### Quick Start
-
-Simply ask the agent to ship a GitHub issue:
-
+```text
+Use documentation to update the installation guide after changing hook behavior.
 ```
-Ship issue 123 using ship_with_review
-```
-
-Or:
-
-```
-Use the ship_with_review skill to implement and merge issue #123
-```
-
-This skill will:
-1. Read and analyze the GitHub issue
-2. Create a feature branch in a worktree
-3. Implement the solution
-4. Create a PR and trigger Codex review
-5. Iterate on NEEDS_WORK feedback (up to 5 times)
-6. Poll for green CI and fix failures (up to 3 times)
-7. Squash merge and clean up
-
-## Available Skills
-
-Skills are invoked by referencing them in conversation or using the Skill tool:
-
-| Skill | Description |
-|-------|-------------|
-| `ship_with_review` | End-to-end issue-to-merge workflow (the signature workflow) |
-| `orientation` | Orient to codebase and project structure |
-| `documentation` | Create or update documentation |
-| `tf_plan_only` | Terraform plan with risk summary (safe, no apply) |
-| `iac` | Infrastructure-as-code workflows |
-| `gh_issue_create` | Create a GitHub issue |
-| `gh_pr_merge` | Merge a PR after checks pass |
-| `gh_pr_view` | View PR details and diff |
-| `rebase` | Rebase current branch on main |
-| `pull_main` | Pull latest from main branch |
-| `stability_checks` | Run stability/sanity checks |
-
-## Available Agents
-
-| Agent | Description |
-|-------|-------------|
-| `pe` | Production Engineering - infra/cloud/terraform tasks |
-| `swe` | Software Engineering - implementation tasks |
-| `doc` | Documentation - creating/updating docs |
 
 ## Installation
 
-```bash
-# Backup existing config and clone
-mv ~/.claude ~/.claude.backup
-git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
+User-level install:
 
-# Verify
-cd ~/.claude && make test
+```bash
+git clone https://github.com/YOUR_USERNAME/osterman.git ~/.claude
+cd ~/.claude
+make test
 ```
 
-## Safety Hooks
+Project-level install is also supported. See `INSTALLATION.md`.
 
-- **`pre_safety_check.sh`** - Blocks dangerous operations (terraform apply, kubectl delete, etc.)
-- **`post_telemetry.sh`** - Logs tool usage for audit
+## Current Shape Of The Repo
 
-## Recommended Tooling
+- `skills/` contains the main reusable workflow guidance
+- `agents/` provides role prompts layered on top of the shared rules
+- `hooks/` and `settings.json` enforce safety and telemetry
 
-This configuration recommends **[shemcp](https://github.com/acartine/shemcp)** for enhanced bash command execution. Remove the shemcp section from `CLAUDE.md` if not using it.
-
----
-
-Built with Claude Code CLI for autonomous, safe, and efficient software development workflows.
+If you want a fully automated issue-to-merge workflow, you need to define that explicitly or add it back as a skill. It is not part of the current repository state.

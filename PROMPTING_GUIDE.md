@@ -1,58 +1,95 @@
 **Purpose**
-- Help you initiate prompts that maximize autonomy and minimize operator thrashing.
+- Help you prompt against the repo as it exists now.
 
-## The Recommended Workflow: Ship With Review
+## Working Style
 
-**For feature work, use the `ship_with_review` skill.** This is osterman's signature capability.
+This config is modular. There is no single built-in "ship the issue end to end" workflow anymore.
 
-### The Ralph Wiggum Loop
+The most reliable prompts do one of these:
 
-Traditional AI development creates "thrashing"—operator repeatedly reviews and requests changes. The `ship_with_review` skill solves this by delegating review to Codex:
+- pick an agent for role context
+- name a specific skill for a narrow workflow
+- say the exact outcome you want verified
 
-1. Agent implements the solution
-2. **Codex** (not the operator) reviews the code
-3. If `NEEDS_WORK`, agent iterates autonomously
-4. Repeat until `APPROVED` or max iterations
-5. CI verification and merge
+## Good Prompt Patterns
 
-**The operator only intervenes when automation hits its limits.**
+For implementation work:
 
-### Usage
-
-Simply ask the agent to ship a GitHub issue using the ship_with_review workflow:
-
-```
-Ship issue 123 using ship_with_review
+```text
+Use the swe agent to implement issue #123. Start with pull_main, run stability_checks, keep the change small, and show me verification before you stop.
 ```
 
-Or reference the skill directly:
+For documentation work:
 
+```text
+Use the documentation skill to update the install docs after the hook changes. Remove stale claims and keep the examples runnable.
 ```
-Use the ship_with_review skill to implement and merge issue #123
+
+For repo orientation:
+
+```text
+Use orientation to map this repository and point me to the files that handle Terraform safety checks.
 ```
 
-The agent handles implementation, review iteration, CI fixes, and merge.
+For investigation first:
 
-## Available Skills
+```text
+Use investigate to find why the CI job is failing. Do not propose a fix until you have concrete evidence.
+```
 
-| Skill | Use Case |
-|-------|----------|
-| `ship_with_review` | End-to-end issue-to-merge workflow |
-| `orientation` | Orient to codebase and project structure |
-| `tf_plan_only` | Terraform plan (safe, no apply) |
-| `gh_issue_create` | Create a GitHub issue |
-| `rebase` | Rebase current branch on main |
+For Terraform planning:
 
-## Available Agents
+```text
+Use the pe agent with tf_plan_only for ./infra workspace staging and summarize the blast radius.
+```
 
-| Agent | Use Case |
-|-------|----------|
-| `pe` | Production Engineering - infra/terraform tasks |
-| `swe` | Software Engineering - implementation |
-| `doc` | Documentation tasks |
+For repo documentation generation:
+
+```text
+Use map-repo to generate or refresh architecture-oriented docs for this repository.
+```
+
+## What To Say Explicitly
+
+Be explicit about:
+
+- the repository or directory to work in
+- whether you want analysis only or code changes
+- what verification you expect
+- whether a PR, branch, or commit is needed
 
 ## Safety Cues
 
-- Say "plan-only" for infra tasks
-- Type "approval granted" to proceed with applies when prompted
-- For production-impacting tasks, use `/pe` and confirm each step
+- Say `plan only` for infra tasks when you do not want any apply path explored.
+- Say `investigate first` when you want evidence before implementation.
+- Say `documentation only` when code changes are out of scope.
+
+## Current Capabilities To Reference
+
+Agents:
+
+- `pe`
+- `swe`
+- `doc`
+
+Skills:
+
+- `orientation`
+- `documentation`
+- `investigate`
+- `pull_main`
+- `rebase`
+- `stability_checks`
+- `tf_plan_only`
+- `iac`
+- `infra_change_review`
+- `map-repo`
+- `enforce-sourcecode-size`
+
+Helper scripts:
+
+- `bin/gh-pr-review`
+- `bin/gh-pr-merge`
+- `bin/gh-issue-triage`
+- `bin/tf-plan-only`
+- `bin/ci-fail-investigate`

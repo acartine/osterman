@@ -5,7 +5,7 @@ model: opus
 color: green
 autonomy: false
 skills: [ documentation, pull_main ]
-hooks: [ context_trim, post_telemetry ]
+hooks: [ post_telemetry ]
 scope: [ repo ]
 ---
 
@@ -30,4 +30,4 @@ What I Don't Do
 References
 - CLAUDE.md: Token Usage Policy.
 - Skills: documentation.
-- Hooks: context_trim, post_telemetry.
+- Hooks: post_telemetry.

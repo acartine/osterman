@@ -48,12 +48,6 @@ info() {
 validate_directory_structure() {
   info "Validating directory structure..."
 
-  if [[ -d "$CONFIG_DIR/commands" ]]; then
-    pass "commands/ directory exists"
-  else
-    fail "commands/ directory is missing"
-  fi
-
   if [[ -d "$CONFIG_DIR/hooks" ]]; then
     pass "hooks/ directory exists"
   else
@@ -181,74 +175,6 @@ validate_hook_scripts() {
   fi
 }
 
-validate_command_files() {
-  info "Validating command files..."
-
-  if [[ ! -d "$CONFIG_DIR/commands" ]]; then
-    return
-  fi
-
-  local cmd_count=0
-
-  # Find all .md files in commands directory
-  while IFS= read -r -d '' cmd_file; do
-    ((cmd_count++))
-    local cmd_name
-    cmd_name=$(basename "$cmd_file")
-
-    # Check for frontmatter
-    if head -n 1 "$cmd_file" | grep -q '^---$'; then
-      pass "Command has frontmatter: $cmd_name"
-
-      # Extract frontmatter (between first and second ---)
-      local frontmatter
-      frontmatter=$(awk '/^---$/{if(++n==2)exit;next}n==1' "$cmd_file")
-
-      # Check for required fields
-      if echo "$frontmatter" | grep -q '^description:'; then
-        pass "Command has description field: $cmd_name"
-      else
-        fail "Command missing description field: $cmd_name"
-      fi
-
-      # Check for model field (optional but recommended)
-      if echo "$frontmatter" | grep -q '^model:'; then
-        local model_id
-        model_id=$(echo "$frontmatter" | grep '^model:' | sed 's/^model:[[:space:]]*//')
-
-        # Validate model ID format (claude-sonnet-*, claude-haiku-*, claude-opus-*, claude-3-5-sonnet-*)
-        if [[ "$model_id" =~ ^claude-([0-9]+-[0-9]+-)?((sonnet|haiku|opus)-|v[0-9]+) ]]; then
-          pass "Command has valid model ID: $cmd_name ($model_id)"
-        else
-          warn "Command has potentially invalid model ID: $cmd_name ($model_id)"
-        fi
-      fi
-
-      # Check for allowed-tools field (optional but recommended)
-      if echo "$frontmatter" | grep -q '^allowed-tools:'; then
-        pass "Command has allowed-tools field: $cmd_name"
-      fi
-
-    else
-      fail "Command missing frontmatter: $cmd_name"
-    fi
-
-    # Check for examples section (from Option D)
-    if grep -q '^## Examples' "$cmd_file"; then
-      pass "Command includes Examples section: $cmd_name"
-    else
-      warn "Command missing Examples section: $cmd_name (recommended)"
-    fi
-
-  done < <(find "$CONFIG_DIR/commands" -name "*.md" -print0)
-
-  if [[ $cmd_count -eq 0 ]]; then
-    fail "No command files (.md files) found in commands/ directory"
-  else
-    pass "Found $cmd_count command file(s)"
-  fi
-}
-
 validate_claude_md() {
   info "Validating CLAUDE.md..."
 
@@ -288,9 +214,6 @@ main() {
   echo ""
 
   validate_hook_scripts
-  echo ""
-
-  validate_command_files
   echo ""
 
   validate_claude_md
