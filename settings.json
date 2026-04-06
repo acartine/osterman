@@ -4,7 +4,6 @@
   },
   "permissions": {
     "allow": [
-      "Bash(--help:*)",
       "Bash(awk:*)",
       "Bash(aws:*)",
       "Bash(az:*)",
