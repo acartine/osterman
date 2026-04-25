@@ -86,10 +86,10 @@
       "Edit",
       "Write",
       "WebSearch",
+      "Task(*)",
       "mcp__chrome-devtools__*",
       "mcp__playwright__*",
-      "mcp__shemcp__*",
-      "Task(*)"
+      "mcp__shemcp__*"
     ],
     "ask": [],
     "defaultMode": "acceptEdits"
